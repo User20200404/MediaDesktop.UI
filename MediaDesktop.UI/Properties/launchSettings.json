@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "MediaDesktop.UI (Package)": {
+      "commandName": "MsixPackage"
+    },
+    "MediaDesktop.UI (Unpackaged)": {
+      "commandName": "Project"
+    }
+  }
+}

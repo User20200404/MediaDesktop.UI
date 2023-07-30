@@ -1,0 +1,362 @@
+﻿<Page
+    x:Class="MediaDesktop.UI.Views.Pages.ClientHostPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:global="using:MediaDesktop.UI.Services"
+    xmlns:local="using:MediaDesktop.UI.Views.Windows"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:vm="using:MediaDesktop.UI.ViewModels"
+    Background="Transparent"
+    mc:Ignorable="d">
+    <Page.Resources>
+        <Storyboard x:Key="ControlPanelShowAnimation" Storyboard.TargetName="controlGroupBorder">
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(TranslateTransform.Y)" Duration="0:0:0.25">
+                <DoubleAnimationUsingKeyFrames.KeyFrames>
+                    <SplineDoubleKeyFrame
+                        KeySpline="0,0.99 0.9,0.999"
+                        KeyTime="0:0:0.25"
+                        Value="0" />
+                </DoubleAnimationUsingKeyFrames.KeyFrames>
+            </DoubleAnimationUsingKeyFrames>
+        </Storyboard>
+        <Storyboard x:Key="ControlPanelHideAnimation" Storyboard.TargetName="controlGroupBorder">
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(TranslateTransform.Y)" Duration="0:0:0.25">
+                <DoubleAnimationUsingKeyFrames.KeyFrames>
+                    <SplineDoubleKeyFrame
+                        x:Name="controlPanelHideEndKeyFrame"
+                        KeySpline="0,0.99 0.9,0.999"
+                        KeyTime="0:0:0.25"
+                        Value="{Binding ElementName=controlGroupBorder, Path=ActualHeight}" />
+                </DoubleAnimationUsingKeyFrames.KeyFrames>
+            </DoubleAnimationUsingKeyFrames>
+        </Storyboard>
+        <vm:IsFavouriteConverter x:Key="IsFavouriteConverter" />
+        <vm:IsPlayingConverter x:Key="IsPlayingConverter" />
+        <vm:MillionSecondsTimeConverter x:Key="MsToHMSTimeConverter" />
+        <vm:InvisbileIfEqualsConverter x:Key="InvisibleIfEqualsConverter" />
+        <vm:SliderProgressConverter x:Key="SliderProgressConverter" />
+        <vm:VolumeIconConverter x:Key="VolumeIconConverter" />
+        <vm:PlayBackModeConverter x:Key="PlayBackModeConverter" />
+    </Page.Resources>
+    <Grid>
+        <!--<Image
+            Grid.RowSpan="3"
+            HorizontalAlignment="Stretch"
+            VerticalAlignment="Stretch"
+            d:DataContext="{d:DesignInstance Type=vm:MediaDesktopItemViewModel}"
+            DataContext="{x:Bind global:GlobalResources.ViewModelCollection.CurrentDesktopItemViewModel, Mode=OneWay}"
+            Source="{Binding ImagePath, Converter={StaticResource ImageSourceConverter}}"
+            Stretch="UniformToFill" />
+        <Rectangle
+            Grid.RowSpan="3"
+            HorizontalAlignment="Stretch"
+            VerticalAlignment="Stretch">
+            <Rectangle.Fill>
+                <AcrylicBrush TintColor="{ThemeResource SystemAccentColor}" TintOpacity="0.10" />
+            </Rectangle.Fill>
+        </Rectangle>-->
+
+        <Grid
+            x:Name="navigationViewBackgroundLayerMaskGrid"
+            HorizontalAlignment="Left"
+            VerticalAlignment="Stretch"
+            Background="{ThemeResource NavigationViewContentBackground}"
+            Visibility="{x:Bind global:GlobalResources.ViewModelCollection.SettingsItemViewModel.IsNavigationViewMaterialEnabled, Converter={StaticResource InvisibleIfEqualsConverter}, ConverterParameter=True, Mode=OneWay}" />
+
+        <NavigationView
+            x:Name="leftNavigationView"
+            IsBackButtonVisible="Collapsed"
+            IsSettingsVisible="True"
+            ItemInvoked="NavigationView_ItemInvoked"
+            OpenPaneLength="265"
+            SelectedItem="{Binding ElementName=navigationViewItem_Lib}">
+            <!--  每次启动时，自动转至库页面  -->
+            <NavigationView.MenuItems>
+                <NavigationViewItem
+                    x:Name="navigationViewItem_Play"
+                    Content="当前播放"
+                    Icon="Play"
+                    SizeChanged="NavigationViewItem_Play_SizeChanged" />
+                <NavigationViewItem
+                    x:Name="navigationViewItem_Lib"
+                    Content="库"
+                    Icon="Library" />
+            </NavigationView.MenuItems>
+
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="90" />
+                </Grid.RowDefinitions>
+                <Grid
+                    x:Name="pageBackgroundLayerMaskGrid"
+                    Grid.Row="0"
+                    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+                    Visibility="{x:Bind global:GlobalResources.ViewModelCollection.SettingsItemViewModel.IsPageMaterialEnabled, Converter={StaticResource InvisibleIfEqualsConverter}, ConverterParameter=True, Mode=OneWay}" />
+                <Frame
+                    x:Name="contentFrame"
+                    Grid.Row="0"
+                    x:FieldModifier="public"
+                    Background="Transparent"
+                    CacheSize="5"
+                    IsNavigationStackEnabled="False" />
+
+                <Border
+                    x:Name="controlGroupBorder"
+                    Grid.Row="1"
+                    HorizontalAlignment="Stretch"
+                    VerticalAlignment="Stretch"
+                    BorderBrush="{ThemeResource SystemBaseMediumLowColor}"
+                    BorderThickness="1"
+                    Visibility="Collapsed">
+                    <Border.RenderTransform>
+                        <TranslateTransform />
+                    </Border.RenderTransform>
+                    <Grid>
+                        <Grid
+                            x:Name="playBackControlBackgroundLayerMaskGrid"
+                            Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+                            Visibility="{x:Bind global:GlobalResources.ViewModelCollection.SettingsItemViewModel.IsPlayBackControlMaterialEnabled, Converter={StaticResource InvisibleIfEqualsConverter}, ConverterParameter=True, Mode=OneWay}" />
+                        <Grid Background="Transparent">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="160" />
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="30" />
+                                <RowDefinition Height="*" />
+                            </Grid.RowDefinitions>
+
+                            <Border
+                                Grid.RowSpan="2"
+                                Grid.Column="0"
+                                HorizontalAlignment="Stretch"
+                                VerticalAlignment="Stretch"
+                                BorderBrush="#44FFFFFF"
+                                BorderThickness="1"
+                                CornerRadius="4">
+                                <Image
+                                    HorizontalAlignment="Stretch"
+                                    VerticalAlignment="Stretch"
+                                    Source="{x:Bind global:GlobalResources.ViewModelCollection.CurrentDesktopItemViewModel.ImagePath, Mode=OneWay, Converter={StaticResource ImageSourceConverter}}"
+                                    Stretch="UniformToFill" />
+                            </Border>
+
+                            <StackPanel
+                                Grid.RowSpan="2"
+                                Grid.Column="1"
+                                Margin="10,0,15,0"
+                                VerticalAlignment="Stretch"
+                                Orientation="Horizontal"
+                                Spacing="20">
+                                <StackPanel.Resources>
+                                    <Style TargetType="Button">
+                                        <Setter Property="FontFamily" Value="Segoe MDL2 Assets" />
+                                    </Style>
+                                </StackPanel.Resources>
+                                <StackPanel.ChildrenTransitions>
+                                    <TransitionCollection>
+                                        <EntranceThemeTransition FromVerticalOffset="300" IsStaggeringEnabled="True" />
+                                    </TransitionCollection>
+                                </StackPanel.ChildrenTransitions>
+                                <Button
+                                    Width="40"
+                                    Height="40"
+                                    Command="{x:Bind global:GlobalResources.ViewModelCollection.PlayLastCommand}"
+                                    Content="&#xE892;"
+                                    CornerRadius="20" />
+                                <Button
+                                    Width="50"
+                                    Height="50"
+                                    Command="{x:Bind global:GlobalResources.ViewModelCollection.CurrentDesktopItemViewModel.MediaItemViewModel.TogglePlayStatusCommand, Mode=OneWay}"
+                                    CommandParameter="{x:Bind global:GlobalResources.MediaDesktopPlayer}"
+                                    Content="{x:Bind global:GlobalResources.ViewModelCollection.CurrentDesktopItemViewModel.MediaItemViewModel.RuntimeDataSet.IsMediaPlaying, Converter={StaticResource IsPlayingConverter}, Mode=OneWay, FallbackValue='&#xE768;'}"
+                                    CornerRadius="25" />
+                                <Button
+                                    Width="40"
+                                    Height="40"
+                                    Command="{x:Bind global:GlobalResources.ViewModelCollection.PlayNextCommand}"
+                                    Content="&#xE893;"
+                                    CornerRadius="20" />
+                            </StackPanel>
+
+                            <StackPanel
+                                Grid.Row="0"
+                                Grid.Column="2"
+                                HorizontalAlignment="Right"
+                                VerticalAlignment="Bottom"
+                                Orientation="Horizontal">
+                                <StackPanel.Resources>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="FontSize" Value="14" />
+                                        <Setter Property="Foreground" Value="Gray" />
+                                    </Style>
+                                </StackPanel.Resources>
+                                <TextBlock Text="{x:Bind global:GlobalResources.ViewModelCollection.CurrentDesktopItemViewModel.MediaItemViewModel.RuntimeDataSet.MediaCurrentTime, Mode=OneWay, Converter={StaticResource MsToHMSTimeConverter}}" />
+                                <TextBlock Text="/" />
+                                <TextBlock Text="{x:Bind global:GlobalResources.ViewModelCollection.CurrentDesktopItemViewModel.MediaItemViewModel.RuntimeDataSet.MediaLength, Mode=OneWay, Converter={StaticResource MsToHMSTimeConverter}}" />
+                            </StackPanel>
+
+                            <StackPanel
+                                Grid.Row="0"
+                                Grid.Column="2"
+                                Margin="5,8,0,0"
+                                Orientation="Horizontal"
+                                Spacing="10">
+                                <TextBlock
+                                    VerticalAlignment="Bottom"
+                                    FontSize="16"
+                                    Text="{x:Bind global:GlobalResources.ViewModelCollection.CurrentDesktopItemViewModel.Title, Mode=OneWay}" />
+                                <TextBlock
+                                    VerticalAlignment="Bottom"
+                                    FontSize="14"
+                                    Foreground="Gray"
+                                    Text="{x:Bind global:GlobalResources.ViewModelCollection.CurrentDesktopItemViewModel.SubTitle, Mode=OneWay}" />
+                            </StackPanel>
+                            <Slider
+                                x:Name="progressSlider"
+                                Grid.Row="1"
+                                Grid.Column="2"
+                                Margin="0,10,0,0"
+                                HorizontalAlignment="Stretch"
+                                IsEnabled="{x:Bind global:GlobalResources.ViewModelCollection.CurrentDesktopItemViewModel.MediaItemViewModel.RuntimeDataSet.IsMediaDesktopPlayerChangeRequsetCompleted, Mode=OneWay}"
+                                Maximum="1"
+                                StepFrequency="0.001"
+                                ValueChanged="ProgressSlider_ValueChanged"
+                                Value="{x:Bind global:GlobalResources.ViewModelCollection.CurrentDesktopItemViewModel.MediaItemViewModel.RuntimeDataSet.MediaPlayedProgress, Mode=OneWay}" />
+
+                            <StackPanel
+                                Grid.RowSpan="2"
+                                Grid.Column="3"
+                                Margin="30,0,20,0"
+                                Orientation="Horizontal"
+                                Spacing="12">
+
+
+                                <StackPanel.Resources>
+                                    <ResourceDictionary>
+                                        <Style TargetType="Button">
+                                            <Setter Property="FontFamily" Value="Segoe MDL2 Assets" />
+                                            <Setter Property="Width" Value="50" />
+                                            <Setter Property="Height" Value="50" />
+                                            <Setter Property="CornerRadius" Value="25" />
+                                            <Setter Property="FontSize" Value="16" />
+                                            <Setter Property="Background" Value="Transparent" />
+                                            <Setter Property="BorderThickness" Value="0" />
+                                        </Style>
+                                    </ResourceDictionary>
+                                </StackPanel.Resources>
+                                <Button
+                                    Command="{x:Bind global:GlobalResources.ViewModelCollection.CurrentDesktopItemViewModel.ToggleFavouriteCommand, Mode=OneWay}"
+                                    Content="{x:Bind global:GlobalResources.ViewModelCollection.CurrentDesktopItemViewModel.IsFavourite, Converter={StaticResource IsFavouriteConverter}, ConverterParameter=Icon, Mode=OneWay, FallbackValue='&#xEB51;'}"
+                                    Foreground="Red">
+                                    <Button.Resources>
+                                        <ResourceDictionary x:Key="Default" Source="/Resources/HeartButtonForeground.xaml" />
+                                    </Button.Resources>
+                                </Button>
+                                <Button x:Name="speedRatioButton" Content="&#xEC48;">
+                                    <Button.Flyout>
+                                        <MenuFlyout>
+                                            <MenuFlyoutItem
+                                                Command="{x:Bind global:GlobalResources.ViewModelCollection.SettingsItemViewModel.SetSpeedRatioCommand, Mode=OneWay}"
+                                                CommandParameter="0.25"
+                                                Text="x0.25" />
+                                            <MenuFlyoutItem
+                                                Command="{x:Bind global:GlobalResources.ViewModelCollection.SettingsItemViewModel.SetSpeedRatioCommand, Mode=OneWay}"
+                                                CommandParameter="0.5"
+                                                Text="x0.5" />
+                                            <MenuFlyoutItem
+                                                Command="{x:Bind global:GlobalResources.ViewModelCollection.SettingsItemViewModel.SetSpeedRatioCommand, Mode=OneWay}"
+                                                CommandParameter="0.75"
+                                                Text="x0.75" />
+                                            <MenuFlyoutItem
+                                                Command="{x:Bind global:GlobalResources.ViewModelCollection.SettingsItemViewModel.SetSpeedRatioCommand, Mode=OneWay}"
+                                                CommandParameter="1.0"
+                                                Text="x1.0" />
+                                            <MenuFlyoutItem
+                                                Command="{x:Bind global:GlobalResources.ViewModelCollection.SettingsItemViewModel.SetSpeedRatioCommand, Mode=OneWay}"
+                                                CommandParameter="1.25"
+                                                Text="x1.25" />
+                                            <MenuFlyoutItem
+                                                Command="{x:Bind global:GlobalResources.ViewModelCollection.SettingsItemViewModel.SetSpeedRatioCommand, Mode=OneWay}"
+                                                CommandParameter="1.5"
+                                                Text="x1.5" />
+                                            <MenuFlyoutItem
+                                                Command="{x:Bind global:GlobalResources.ViewModelCollection.SettingsItemViewModel.SetSpeedRatioCommand, Mode=OneWay}"
+                                                CommandParameter="1.75"
+                                                Text="x1.75" />
+                                            <MenuFlyoutItem
+                                                Command="{x:Bind global:GlobalResources.ViewModelCollection.SettingsItemViewModel.SetSpeedRatioCommand, Mode=OneWay}"
+                                                CommandParameter="2.0"
+                                                Text="x2.0" />
+                                        </MenuFlyout>
+                                    </Button.Flyout>
+                                </Button>
+                                <Button x:Name="volumeButton" Content="{x:Bind global:GlobalResources.ViewModelCollection.SettingsItemViewModel.Volume, Converter={StaticResource VolumeIconConverter}, Mode=OneWay}">
+                                    <Button.Flyout>
+                                        <Flyout>
+                                            <StackPanel Orientation="Horizontal" Spacing="5">
+                                                <TextBlock
+                                                    FontFamily="Segoe MDL2 Assets"
+                                                    FontSize="15"
+                                                    Text="{x:Bind volumeButton.Content}" />
+                                                <Slider
+                                                    Width="325"
+                                                    Maximum="100"
+                                                    StepFrequency="1"
+                                                    Value="{x:Bind global:GlobalResources.ViewModelCollection.SettingsItemViewModel.Volume, Mode=TwoWay}" />
+                                            </StackPanel>
+                                        </Flyout>
+                                    </Button.Flyout>
+                                </Button>
+                                <Button Command="{x:Bind global:GlobalResources.ViewModelCollection.SettingsItemViewModel.SwitchPlayBackModeCommand}" Content="{x:Bind global:GlobalResources.ViewModelCollection.SettingsItemViewModel.PlayBackMode, Converter={StaticResource PlayBackModeConverter}, Mode=OneWay}" />
+                                <Button x:Name="moreButton" Content="&#xE712;">
+                                    <Button.Flyout>
+                                        <MenuFlyout>
+                                            <MenuFlyoutItem
+                                                Command="{x:Bind global:GlobalResources.ViewModelCollection.CurrentDesktopItemViewModel.MediaItemViewModel.ShowMediaInfoDialogCommand, Mode=OneWay}"
+                                                IsEnabled="{x:Bind global:GlobalResources.ViewModelCollection.CurrentDesktopItemViewModel, Converter={StaticResource IsInequalConverter}, Mode=OneWay, ConverterParameter={x:Null}}"
+                                                Text="统计数据">
+                                                <MenuFlyoutItem.Icon>
+                                                    <FontIcon Glyph="&#xF000;" />
+                                                </MenuFlyoutItem.Icon>
+                                            </MenuFlyoutItem>
+                                            <MenuFlyoutItem
+                                                Command="{x:Bind global:GlobalResources.ShowHideMainWindowCommand, Mode=OneWay}"
+                                                Foreground="{ThemeResource SystemAccentColorLight1}"
+                                                Text="隐藏窗口">
+                                                <MenuFlyoutItem.Icon>
+                                                    <FontIcon Glyph="&#xE78B;" />
+                                                </MenuFlyoutItem.Icon>
+                                            </MenuFlyoutItem>
+                                            <MenuFlyoutItem Click="HideControlPanelButton_Click" Text="隐藏播放控件">
+                                                <MenuFlyoutItem.Icon>
+                                                    <FontIcon Glyph="&#xE78B;" />
+                                                </MenuFlyoutItem.Icon>
+                                            </MenuFlyoutItem>
+                                        </MenuFlyout>
+                                    </Button.Flyout>
+                                </Button>
+                            </StackPanel>
+                        </Grid>
+                    </Grid>
+                </Border>
+                <Button
+                    x:Name="showControlPanelButton"
+                    Grid.RowSpan="2"
+                    Width="50"
+                    Height="25"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Bottom"
+                    Click="ShowControlPanelButton_Click"
+                    Content="^"
+                    FontSize="12"
+                    Visibility="Collapsed" />
+            </Grid>
+        </NavigationView>
+    </Grid>
+</Page>

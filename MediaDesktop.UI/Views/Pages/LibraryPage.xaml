@@ -1,0 +1,641 @@
+﻿<Page
+    x:Class="MediaDesktop.UI.Views.Pages.LibraryPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:global="using:MediaDesktop.UI.Services"
+    xmlns:local="using:MediaDesktop.UI.Views.Pages"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:models="using:MediaDesktop.UI.ViewModels"
+    d:DataContext="{d:DesignInstance Type=models:MediaDesktopItemViewModel}"
+    CacheMode="BitmapCache"
+    NavigationCacheMode="Enabled"
+    PointerWheelChanged="Page_PointerWheelChanged"
+    PreviewKeyDown="Page_KeyDown"
+    PreviewKeyUp="Page_KeyUp"
+    mc:Ignorable="d">
+    <Page.Resources>
+        <models:IsFavouriteConverter x:Key="IsFavouriteConverter" />
+        <models:IsPlayingConverter x:Key="IsPlayingConverter" />
+        <models:VisbileIfEqualsConverter x:Key="VisbileIfEqualsConverter" />
+        <models:FloatToVector x:Key="FloatToVector" />
+        <Style x:Key="LibraryGridViewStyle" TargetType="GridView">
+            <Setter Property="CanDragItems" Value="True" />
+            <Setter Property="CanReorderItems" Value="True" />
+            <Setter Property="AllowDrop" Value="True" />
+            <Setter Property="IsItemClickEnabled" Value="True" />
+            <Setter Property="Background" Value="Transparent" />
+        </Style>
+        <Style x:Key="PivotStyle" TargetType="Pivot">
+            <Setter Property="HorizontalAlignment" Value="Stretch" />
+            <Setter Property="VerticalAlignment" Value="Stretch" />
+            <Setter Property="SelectedIndex" Value="{x:Bind global:GlobalResources.ViewModelCollection.SettingsItemViewModel.LastLibraryPagePivotIndex, Mode=OneWay}" />
+        </Style>
+        <Style x:Key="NoItemNotifyIconStyle" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="80" />
+            <Setter Property="FontFamily" Value="Segoe MDL2 Assets" />
+            <Setter Property="HorizontalAlignment" Value="Center" />
+        </Style>
+        <Style x:Key="NoItemNotifyMainTextStyle" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="20" />
+            <Setter Property="HorizontalAlignment" Value="Center" />
+            <Setter Property="Foreground" Value="{ThemeResource SystemControlForegroundBaseMediumLowBrush}" />
+        </Style>
+        <Style x:Key="NoItemNotifySecondaryTextStyle" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="16" />
+            <Setter Property="HorizontalAlignment" Value="Center" />
+        </Style>
+        <Style x:Key="NoItemStackPanelStyle" TargetType="StackPanel">
+            <Setter Property="Orientation" Value="Vertical" />
+            <Setter Property="HorizontalAlignment" Value="Center" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+        </Style>
+        <MenuFlyout x:Key="LibraryItemRightTapMenu" ShowMode="TransientWithDismissOnPointerMoveAway">
+            <MenuFlyoutItem
+                Command="{Binding MediaItemViewModel.TogglePlayStatusCommand}"
+                CommandParameter="{x:Bind global:GlobalResources.MediaDesktopPlayer}"
+                Foreground="{ThemeResource SystemAccentColorLight2}"
+                Text="播放/暂停">
+                <MenuFlyoutItem.Icon>
+                    <FontIcon Glyph="{Binding MediaItemViewModel.RuntimeDataSet.IsMediaPlaying, Converter={StaticResource IsPlayingConverter}, Mode=OneWay}" />
+                </MenuFlyoutItem.Icon>
+            </MenuFlyoutItem>
+            <MenuFlyoutItem Command="{Binding MediaItemViewModel.InsertMediaCommand}" Text="下一个播放">
+                <MenuFlyoutItem.Icon>
+                    <FontIcon Glyph="&#xE710;" />
+                </MenuFlyoutItem.Icon>
+            </MenuFlyoutItem>
+            <MenuFlyoutSeparator />
+            <MenuFlyoutItem
+                Command="{x:Bind global:GlobalResources.ViewModelCollection.EditViewModelCommand, FallbackValue={x:Null}}"
+                CommandParameter="{Binding Self}"
+                Foreground="{ThemeResource SystemAccentColorLight3}"
+                Text="编辑项目">
+                <MenuFlyoutItem.Icon>
+                    <FontIcon Glyph="&#xE70F;" />
+                </MenuFlyoutItem.Icon>
+            </MenuFlyoutItem>
+            <MenuFlyoutItem
+                Command="{x:Bind global:GlobalResources.ViewModelCollection.RemoveViewModelCommand, FallbackValue={x:Null}}"
+                CommandParameter="{Binding Self}"
+                Text="删除项目">
+                <MenuFlyoutItem.Icon>
+                    <FontIcon Glyph="&#xE74D;" />
+                </MenuFlyoutItem.Icon>
+            </MenuFlyoutItem>
+            <MenuFlyoutItem
+                Command="{Binding AddToMediaPlayingListCommand}"
+                CommandParameter="{Binding Self}"
+                Text="添加到播放列表">
+                <MenuFlyoutItem.Icon>
+                    <FontIcon Glyph="&#xF5B0;" />
+                </MenuFlyoutItem.Icon>
+            </MenuFlyoutItem>
+        </MenuFlyout>
+        <DataTemplate x:Key="libGridViewItemTemplate" x:DataType="models:MediaDesktopItemViewModel">
+            <Grid Margin="3,3,3,3" CornerRadius="4">
+                <Grid.Transform3D>
+                    <PerspectiveTransform3D />
+                </Grid.Transform3D>
+                <Grid
+                    PointerEntered="ItemGrid_PointerEntered"
+                    PointerExited="ItemGrid_PointerExited"
+                    Tag="{Binding ElementName=gridImage}">
+                    <Image
+                        x:Name="gridImage"
+                        Width="{x:Bind global:GlobalResources.ViewModelCollection.SettingsItemViewModel.LibraryItemScale, Converter={StaticResource BasicCalculateConverter}, ConverterParameter=*384, Mode=OneWay}"
+                        Height="{x:Bind global:GlobalResources.ViewModelCollection.SettingsItemViewModel.LibraryItemScale, Converter={StaticResource BasicCalculateConverter}, ConverterParameter=*216, Mode=OneWay}"
+                        Source="{Binding ImagePath, Mode=OneWay, Converter={StaticResource ImageSourceConverter}}"
+                        Stretch="UniformToFill" />
+                    <Grid
+                        x:Name="maskGrid"
+                        Background="#20CCCCCC"
+                        Visibility="Collapsed" />
+                    <Rectangle
+                        Width="{x:Bind global:GlobalResources.ViewModelCollection.SettingsItemViewModel.LibraryItemScale, Converter={StaticResource BasicCalculateConverter}, ConverterParameter=*384, Mode=OneWay}"
+                        Height="{x:Bind global:GlobalResources.ViewModelCollection.SettingsItemViewModel.LibraryItemScale, Converter={StaticResource BasicCalculateConverter}, ConverterParameter=*216, Mode=OneWay}"
+                        DoubleTapped="LibraryItem_DoubleTapped"
+                        Fill="Transparent"
+                        IsDoubleTapEnabled="True"
+                        PointerPressed="LibraryItem_PointerPressed"
+                        Tag="{Binding ElementName=maskGrid}" />
+
+                    <Border
+                        Height="{x:Bind global:GlobalResources.ViewModelCollection.SettingsItemViewModel.LibraryItemScale, Converter={StaticResource BasicCalculateConverter}, ConverterParameter=*38, Mode=OneWay}"
+                        HorizontalAlignment="Stretch"
+                        VerticalAlignment="Bottom"
+                        Background="{ThemeResource AcrylicInAppFillColorDefaultBrush}"
+                        BorderThickness="0"
+                        CornerRadius="0"
+                        DoubleTapped="LibraryItem_DoubleTapped"
+                        Opacity="0.90"
+                        Tag="{Binding ElementName=maskGrid}">
+                        <Grid>
+                            <Grid.Resources>
+                                <Style TargetType="Button">
+                                    <Setter Property="FontFamily" Value="Segoe MDL2 Assets" />
+                                    <Setter Property="FontSize" Value="{x:Bind global:GlobalResources.ViewModelCollection.SettingsItemViewModel.LibraryItemScale, Converter={StaticResource BasicCalculateConverter}, ConverterParameter=*16, Mode=OneWay}" />
+                                    <Setter Property="BorderThickness" Value="0" />
+                                    <Setter Property="CornerRadius" Value="0" />
+                                    <Setter Property="VerticalAlignment" Value="Stretch" />
+                                    <Setter Property="Width" Value="{x:Bind global:GlobalResources.ViewModelCollection.SettingsItemViewModel.LibraryItemScale, Converter={StaticResource BasicCalculateConverter}, ConverterParameter=*55, Mode=OneWay}" />
+                                    <Setter Property="Background" Value="Transparent" />
+                                </Style>
+                            </Grid.Resources>
+
+                            <Button
+                                HorizontalAlignment="Left"
+                                VerticalAlignment="Stretch"
+                                Command="{Binding MediaItemViewModel.TogglePlayStatusCommand}"
+                                CommandParameter="{x:Bind global:GlobalResources.MediaDesktopPlayer}"
+                                Content="{x:Bind MediaItemViewModel.RuntimeDataSet.IsMediaPlaying, Converter={StaticResource IsPlayingConverter}, Mode=OneWay}"
+                                DoubleTapped="{x:Bind global:GlobalResources.RoutedEventInterupter}" />
+                            <TextBlock
+                                MaxWidth="195"
+                                HorizontalAlignment="Left"
+                                VerticalAlignment="Center"
+                                FontSize="{x:Bind global:GlobalResources.ViewModelCollection.SettingsItemViewModel.LibraryItemScale, Converter={StaticResource BasicCalculateConverter}, ConverterParameter=*18, Mode=OneWay}"
+                                Foreground="{ThemeResource SystemControlForegroundBaseHighBrush}"
+                                Text="{Binding Title}">
+                                <TextBlock.RenderTransform>
+                                    <TranslateTransform X="{x:Bind global:GlobalResources.ViewModelCollection.SettingsItemViewModel.LibraryItemScale, Converter={StaticResource BasicCalculateConverter}, ConverterParameter=*50, Mode=OneWay}" />
+                                </TextBlock.RenderTransform>
+                            </TextBlock>
+                            <StackPanel
+                                HorizontalAlignment="Right"
+                                VerticalAlignment="Stretch"
+                                Orientation="Horizontal"
+                                Spacing="0">
+                                <Button
+                                    Command="{Binding ToggleFavouriteCommand}"
+                                    Content="{Binding IsFavourite, Converter={StaticResource IsFavouriteConverter}, ConverterParameter=Icon}"
+                                    DoubleTapped="{x:Bind global:GlobalResources.RoutedEventInterupter}"
+                                    Foreground="Red">
+                                    <Button.Resources>
+                                        <ResourceDictionary x:Key="Default" Source="/Resources/HeartButtonForeground.xaml" />
+                                    </Button.Resources>
+                                </Button>
+
+                                <Button
+                                    Content="&#xE712;"
+                                    DoubleTapped="{x:Bind global:GlobalResources.RoutedEventInterupter}"
+                                    Flyout="{StaticResource LibraryItemRightTapMenu}" />
+
+                            </StackPanel>
+                        </Grid>
+                    </Border>
+                </Grid>
+            </Grid>
+        </DataTemplate>
+        <DataTemplate x:Key="libGridViewItemTemplate_Favourite" x:DataType="models:MediaDesktopItemViewModel">
+            <Grid Margin="3,3,3,3" CornerRadius="4">
+                <Grid.Transform3D>
+                    <PerspectiveTransform3D />
+                </Grid.Transform3D>
+                <Grid
+                    PointerEntered="ItemGrid_PointerEntered"
+                    PointerExited="ItemGrid_PointerExited"
+                    Tag="{Binding ElementName=gridImage}">
+                    <Image
+                        x:Name="gridImage"
+                        Width="{x:Bind global:GlobalResources.ViewModelCollection.SettingsItemViewModel.LibraryItemScale, Converter={StaticResource BasicCalculateConverter}, ConverterParameter=*384, Mode=OneWay}"
+                        Height="{x:Bind global:GlobalResources.ViewModelCollection.SettingsItemViewModel.LibraryItemScale, Converter={StaticResource BasicCalculateConverter}, ConverterParameter=*216, Mode=OneWay}"
+                        Source="{Binding ImagePath, Mode=OneWay, Converter={StaticResource ImageSourceConverter}}"
+                        Stretch="UniformToFill" />
+                    <Grid
+                        x:Name="maskGrid"
+                        Background="#20CCCCCC"
+                        Visibility="Collapsed" />
+                    <Rectangle
+                        Width="{x:Bind global:GlobalResources.ViewModelCollection.SettingsItemViewModel.LibraryItemScale, Converter={StaticResource BasicCalculateConverter}, ConverterParameter=*384, Mode=OneWay}"
+                        Height="{x:Bind global:GlobalResources.ViewModelCollection.SettingsItemViewModel.LibraryItemScale, Converter={StaticResource BasicCalculateConverter}, ConverterParameter=*216, Mode=OneWay}"
+                        DoubleTapped="LibraryItem_DoubleTapped"
+                        Fill="Transparent"
+                        IsDoubleTapEnabled="True"
+                        PointerPressed="LibraryItem_PointerPressed"
+                        Tag="{Binding ElementName=maskGrid}" />
+                    <Border
+                        Height="{x:Bind global:GlobalResources.ViewModelCollection.SettingsItemViewModel.LibraryItemScale, Converter={StaticResource BasicCalculateConverter}, ConverterParameter=*38, Mode=OneWay}"
+                        HorizontalAlignment="Stretch"
+                        VerticalAlignment="Bottom"
+                        Background="{ThemeResource AcrylicInAppFillColorDefaultBrush}"
+                        BorderThickness="0"
+                        CornerRadius="0"
+                        DoubleTapped="LibraryItem_DoubleTapped"
+                        Opacity="0.90"
+                        Tag="{Binding ElementName=maskGrid}">
+                        <Grid>
+                            <Grid.Resources>
+                                <Style TargetType="Button">
+                                    <Setter Property="FontFamily" Value="Segoe MDL2 Assets" />
+                                    <Setter Property="Width" Value="{x:Bind global:GlobalResources.ViewModelCollection.SettingsItemViewModel.LibraryItemScale, Converter={StaticResource BasicCalculateConverter}, ConverterParameter=*55, Mode=OneWay}" />
+                                    <Setter Property="BorderThickness" Value="0" />
+                                    <Setter Property="CornerRadius" Value="0" />
+                                    <Setter Property="VerticalAlignment" Value="Stretch" />
+                                    <Setter Property="FontSize" Value="{x:Bind global:GlobalResources.ViewModelCollection.SettingsItemViewModel.LibraryItemScale, Converter={StaticResource BasicCalculateConverter}, ConverterParameter=*16, Mode=OneWay}" />
+                                    <Setter Property="Background" Value="Transparent" />
+                                </Style>
+                            </Grid.Resources>
+
+                            <Button
+                                HorizontalAlignment="Left"
+                                VerticalAlignment="Stretch"
+                                Command="{Binding MediaItemViewModel.TogglePlayStatusCommand}"
+                                CommandParameter="{x:Bind global:GlobalResources.MediaDesktopPlayer}"
+                                Content="{x:Bind MediaItemViewModel.RuntimeDataSet.IsMediaPlaying, Converter={StaticResource IsPlayingConverter}, Mode=OneWay}"
+                                DoubleTapped="{x:Bind global:GlobalResources.RoutedEventInterupter}" />
+                            <TextBlock
+                                MaxWidth="195"
+                                HorizontalAlignment="Left"
+                                VerticalAlignment="Center"
+                                FontSize="{x:Bind global:GlobalResources.ViewModelCollection.SettingsItemViewModel.LibraryItemScale, Converter={StaticResource BasicCalculateConverter}, ConverterParameter=*18, Mode=OneWay}"
+                                Text="{Binding Title}">
+                                <TextBlock.RenderTransform>
+                                    <TranslateTransform X="{x:Bind global:GlobalResources.ViewModelCollection.SettingsItemViewModel.LibraryItemScale, Converter={StaticResource BasicCalculateConverter}, ConverterParameter=*50, Mode=OneWay}" />
+                                </TextBlock.RenderTransform>
+                            </TextBlock>
+                            <StackPanel
+                                HorizontalAlignment="Right"
+                                VerticalAlignment="Stretch"
+                                Orientation="Horizontal"
+                                Spacing="0">
+                                <Button
+                                    Command="{Binding ToggleFavouriteCommand}"
+                                    Content="{Binding IsFavourite, Converter={StaticResource IsFavouriteConverter}, ConverterParameter=Icon}"
+                                    DoubleTapped="{x:Bind global:GlobalResources.RoutedEventInterupter}"
+                                    Foreground="Red">
+                                    <Button.Resources>
+                                        <ResourceDictionary x:Key="Default" Source="/Resources/HeartButtonForeground.xaml" />
+                                    </Button.Resources>
+                                </Button>
+
+                                <Button
+                                    Content="&#xE712;"
+                                    DoubleTapped="{x:Bind global:GlobalResources.RoutedEventInterupter}"
+                                    Flyout="{StaticResource LibraryItemRightTapMenu}" />
+
+                            </StackPanel>
+                        </Grid>
+                    </Border>
+                </Grid>
+            </Grid>
+        </DataTemplate>
+        <DataTemplate x:Key="libGridViewItemTemplate_History" x:DataType="models:MediaDesktopItemViewModel">
+            <Grid Margin="3,3,3,3" CornerRadius="4">
+                <Grid.Transform3D>
+                    <PerspectiveTransform3D />
+                </Grid.Transform3D>
+                <Grid
+                    PointerEntered="ItemGrid_PointerEntered"
+                    PointerExited="ItemGrid_PointerExited"
+                    Tag="{Binding ElementName=gridImage}">
+                    <Image
+                        x:Name="gridImage"
+                        Width="{x:Bind global:GlobalResources.ViewModelCollection.SettingsItemViewModel.LibraryItemScale, Converter={StaticResource BasicCalculateConverter}, ConverterParameter=*384, Mode=OneWay}"
+                        Height="{x:Bind global:GlobalResources.ViewModelCollection.SettingsItemViewModel.LibraryItemScale, Converter={StaticResource BasicCalculateConverter}, ConverterParameter=*216, Mode=OneWay}"
+                        Source="{Binding ImagePath, Mode=OneWay, Converter={StaticResource ImageSourceConverter}}"
+                        Stretch="UniformToFill" />
+                    <Grid
+                        x:Name="maskGrid"
+                        Background="#20CCCCCC"
+                        Visibility="Collapsed" />
+                    <Rectangle
+                        Width="{x:Bind global:GlobalResources.ViewModelCollection.SettingsItemViewModel.LibraryItemScale, Converter={StaticResource BasicCalculateConverter}, ConverterParameter=*384, Mode=OneWay}"
+                        Height="{x:Bind global:GlobalResources.ViewModelCollection.SettingsItemViewModel.LibraryItemScale, Converter={StaticResource BasicCalculateConverter}, ConverterParameter=*216, Mode=OneWay}"
+                        DoubleTapped="LibraryItem_DoubleTapped"
+                        Fill="Transparent"
+                        IsDoubleTapEnabled="True"
+                        PointerPressed="LibraryItem_PointerPressed"
+                        RightTapped="LibraryItem_RightTapped"
+                        Tag="{Binding ElementName=maskGrid}" />
+                    <Border
+                        Height="{x:Bind global:GlobalResources.ViewModelCollection.SettingsItemViewModel.LibraryItemScale, Converter={StaticResource BasicCalculateConverter}, ConverterParameter=*38, Mode=OneWay}"
+                        HorizontalAlignment="Stretch"
+                        VerticalAlignment="Bottom"
+                        Background="{ThemeResource AcrylicInAppFillColorDefaultBrush}"
+                        BorderThickness="0"
+                        CornerRadius="0"
+                        DoubleTapped="LibraryItem_DoubleTapped"
+                        Opacity="0.90"
+                        Tag="{Binding ElementName=maskGrid}">
+                        <Grid>
+                            <Grid.Resources>
+                                <Style TargetType="Button">
+                                    <Setter Property="FontFamily" Value="Segoe MDL2 Assets" />
+                                    <Setter Property="FontSize" Value="{x:Bind global:GlobalResources.ViewModelCollection.SettingsItemViewModel.LibraryItemScale, Converter={StaticResource BasicCalculateConverter}, ConverterParameter=*16, Mode=OneWay}" />
+                                    <Setter Property="BorderThickness" Value="0" />
+                                    <Setter Property="CornerRadius" Value="0" />
+                                    <Setter Property="VerticalAlignment" Value="Stretch" />
+                                    <Setter Property="Width" Value="{x:Bind global:GlobalResources.ViewModelCollection.SettingsItemViewModel.LibraryItemScale, Converter={StaticResource BasicCalculateConverter}, ConverterParameter=*55, Mode=OneWay}" />
+                                    <Setter Property="Background" Value="Transparent" />
+                                </Style>
+                            </Grid.Resources>
+
+                            <Button
+                                HorizontalAlignment="Left"
+                                VerticalAlignment="Stretch"
+                                Command="{Binding MediaItemViewModel.TogglePlayStatusCommand}"
+                                CommandParameter="{x:Bind global:GlobalResources.MediaDesktopPlayer}"
+                                Content="{x:Bind MediaItemViewModel.RuntimeDataSet.IsMediaPlaying, Converter={StaticResource IsPlayingConverter}, Mode=OneWay}"
+                                DoubleTapped="{x:Bind global:GlobalResources.RoutedEventInterupter}" />
+                            <TextBlock
+                                MaxWidth="195"
+                                HorizontalAlignment="Left"
+                                VerticalAlignment="Center"
+                                FontSize="{x:Bind global:GlobalResources.ViewModelCollection.SettingsItemViewModel.LibraryItemScale, Converter={StaticResource BasicCalculateConverter}, ConverterParameter=*18, Mode=OneWay}"
+                                Text="{Binding Title}">
+                                <TextBlock.RenderTransform>
+                                    <TranslateTransform X="{x:Bind global:GlobalResources.ViewModelCollection.SettingsItemViewModel.LibraryItemScale, Converter={StaticResource BasicCalculateConverter}, ConverterParameter=*50, Mode=OneWay}" />
+                                </TextBlock.RenderTransform>
+                            </TextBlock>
+                            <StackPanel
+                                HorizontalAlignment="Right"
+                                VerticalAlignment="Stretch"
+                                Orientation="Horizontal"
+                                Spacing="0">
+                                <Button
+                                    Command="{Binding ToggleFavouriteCommand}"
+                                    Content="{Binding IsFavourite, Converter={StaticResource IsFavouriteConverter}, ConverterParameter=Icon}"
+                                    DoubleTapped="{x:Bind global:GlobalResources.RoutedEventInterupter}"
+                                    Foreground="Red">
+                                    <Button.Resources>
+                                        <ResourceDictionary x:Key="Default" Source="/Resources/HeartButtonForeground.xaml" />
+                                    </Button.Resources>
+                                </Button>
+
+                                <Button
+                                    Command="{x:Bind global:GlobalResources.ViewModelCollection.EditViewModelCommand}"
+                                    CommandParameter="{x:Bind Self}"
+                                    Content="&#xE70F;"
+                                    DoubleTapped="{x:Bind global:GlobalResources.RoutedEventInterupter}" />
+                                <Button Command="{x:Bind ResetHistoryLevelCommand}" Content="&#xED61;" />
+                            </StackPanel>
+                        </Grid>
+                    </Border>
+                </Grid>
+            </Grid>
+        </DataTemplate>
+        <Storyboard x:Key="DragMenuItem0DragEnterAnimation">
+            <ColorAnimation
+                Storyboard.TargetName="addToLibraryMenuRelativePanel"
+                Storyboard.TargetProperty="(RelativePanel.Background).(SolidColorBrush.Color)"
+                To="{ThemeResource SystemBaseLowColor}"
+                Duration="0:0:0.15" />
+        </Storyboard>
+        <Storyboard x:Key="DragMenuItem1DragEnterAnimation">
+            <ColorAnimation
+                Storyboard.TargetName="addToListMenuRelativePanel"
+                Storyboard.TargetProperty="(RelativePanel.Background).(SolidColorBrush.Color)"
+                To="{ThemeResource SystemBaseLowColor}"
+                Duration="0:0:0.15" />
+        </Storyboard>
+        <Storyboard x:Key="DragMenuItem0DragLeaveAnimation">
+            <ColorAnimation
+                Storyboard.TargetName="addToLibraryMenuRelativePanel"
+                Storyboard.TargetProperty="(RelativePanel.Background).(SolidColorBrush.Color)"
+                To="Transparent"
+                Duration="0:0:0.15" />
+        </Storyboard>
+        <Storyboard x:Key="DragMenuItem1DragLeaveAnimation">
+            <ColorAnimation
+                Storyboard.TargetName="addToListMenuRelativePanel"
+                Storyboard.TargetProperty="(RelativePanel.Background).(SolidColorBrush.Color)"
+                To="Transparent"
+                Duration="0:0:0.15" />
+        </Storyboard>
+    </Page.Resources>
+
+    <Grid
+        x:Name="libraryPageRootGrid"
+        AllowDrop="True"
+        DragEnter="LibraryPageRootGrid_DragEnter"
+        DragLeave="LibraryPageRootGrid_DragLeave">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <Pivot
+            x:Name="pivot"
+            Title="库"
+            Style="{StaticResource PivotStyle}">
+            <PivotItem
+                x:Name="pivotItem_All"
+                FontSize="30"
+                Header="所有">
+                <Grid Background="Transparent">
+                    <StackPanel Style="{StaticResource NoItemStackPanelStyle}" Visibility="{x:Bind ViewModelCollection.ViewModelItems.Count, Converter={StaticResource VisbileIfEqualsConverter}, ConverterParameter=0, Mode=OneWay}">
+                        <TextBlock Style="{StaticResource NoItemNotifyIconStyle}" Text="&#xE82E;" />
+                        <TextBlock Style="{StaticResource NoItemNotifyMainTextStyle}" Text="这里好像还没有项目" />
+                        <TextBlock Style="{StaticResource NoItemNotifySecondaryTextStyle}" Text="点击右上角按钮添加项目吧~" />
+                    </StackPanel>
+                    <GridView
+                        x:Name="gridView_All"
+                        ItemTemplate="{StaticResource libGridViewItemTemplate}"
+                        ItemsSource="{x:Bind global:GlobalResources.ViewModelCollection.ViewModelItems}"
+                        Style="{StaticResource LibraryGridViewStyle}" />
+                </Grid>
+
+            </PivotItem>
+            <PivotItem
+                x:Name="pivotItem_Favourite"
+                CanBeScrollAnchor="False"
+                FontSize="30"
+                Header="收藏">
+                <Grid>
+                    <StackPanel Style="{StaticResource NoItemStackPanelStyle}" Visibility="{x:Bind ViewModelCollection.ViewModelItems_Favourite.Count, Converter={StaticResource VisbileIfEqualsConverter}, ConverterParameter=0, Mode=OneWay}">
+                        <TextBlock Style="{StaticResource NoItemNotifyIconStyle}" Text="&#xEB52;" />
+                        <TextBlock Style="{StaticResource NoItemNotifyMainTextStyle}" Text="这里将会显示你收藏的项目" />
+                        <TextBlock Style="{StaticResource NoItemNotifySecondaryTextStyle}" Text="快去将项目添加到你的收藏列表吧~" />
+                    </StackPanel>
+
+                    <GridView
+                        x:Name="gridView_Favourite"
+                        ItemTemplate="{StaticResource libGridViewItemTemplate_Favourite}"
+                        ItemsSource="{x:Bind global:GlobalResources.ViewModelCollection.ViewModelItems_Favourite, Mode=OneWay}"
+                        Style="{StaticResource LibraryGridViewStyle}" />
+                </Grid>
+            </PivotItem>
+            <PivotItem
+                x:Name="pivotItem_History"
+                FontSize="30"
+                Header="历史">
+                <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                    <StackPanel Style="{StaticResource NoItemStackPanelStyle}" Visibility="{x:Bind ViewModelCollection.ViewModelItems_History.Count, Converter={StaticResource VisbileIfEqualsConverter}, ConverterParameter=0, Mode=OneWay}">
+                        <TextBlock Style="{StaticResource NoItemNotifyIconStyle}" Text="&#xE823;" />
+                        <TextBlock Style="{StaticResource NoItemNotifyMainTextStyle}" Text="看来你最近没有播放任何项目呢" />
+                        <TextBlock Style="{StaticResource NoItemNotifySecondaryTextStyle}" Text="挑几个喜欢的试试吧~" />
+                    </StackPanel>
+
+                    <GridView
+                        CanDrag="False"
+                        CanDragItems="False"
+                        CanReorderItems="False"
+                        ItemTemplate="{StaticResource libGridViewItemTemplate_History}"
+                        ItemsSource="{x:Bind global:GlobalResources.ViewModelCollection.ViewModelItems_History, Mode=OneWay}"
+                        Style="{StaticResource LibraryGridViewStyle}" />
+                </Grid>
+            </PivotItem>
+
+            <PivotItem
+                x:Name="pivotItem_PlayingList"
+                HorizontalContentAlignment="Stretch"
+                VerticalContentAlignment="Stretch"
+                FontSize="30"
+                Header="播放列表">
+                <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                    <StackPanel Style="{StaticResource NoItemStackPanelStyle}" Visibility="{x:Bind ViewModelCollection.MediaPlayingListViewModels.Count, Converter={StaticResource VisbileIfEqualsConverter}, ConverterParameter=0, Mode=OneWay}">
+                        <TextBlock Style="{StaticResource NoItemNotifyIconStyle}" Text="&#xE7BC;" />
+                        <TextBlock Style="{StaticResource NoItemNotifyMainTextStyle}" Text="播放列表空空如也" />
+                        <TextBlock Style="{StaticResource NoItemNotifySecondaryTextStyle}" Text="点击右上角按钮添加播放列表" />
+                    </StackPanel>
+
+                    <Frame x:Name="playingListFrame" />
+                </Grid>
+            </PivotItem>
+        </Pivot>
+
+        <Button
+            Width="45"
+            Height="30"
+            Margin="0,15,15,0"
+            HorizontalAlignment="Right"
+            VerticalAlignment="Top"
+            Command="{x:Bind global:GlobalResources.ViewModelCollection.AddViewModelCommand}"
+            Content="&#xE710;"
+            FontFamily="Segoe MDL2 Assets"
+            FontSize="15" />
+
+        <Button
+            Width="45"
+            Height="30"
+            Margin="0,15,68,0"
+            HorizontalAlignment="Right"
+            VerticalAlignment="Top"
+            Command="{x:Bind global:GlobalResources.ViewModelCollection.ResetHistoryCommand}"
+            Content="&#xF739;"
+            FontFamily="Segoe MDL2 Assets"
+            FontSize="15"
+            Visibility="Visible" />
+
+        <Button
+            Width="45"
+            Height="30"
+            Margin="0,15,121,0"
+            HorizontalAlignment="Right"
+            VerticalAlignment="Top"
+            Command="{x:Bind global:GlobalResources.ViewModelCollection.AddPlayingListViewModelCommand}"
+            Content="&#xE8F4;"
+            FontFamily="Segoe MDL2 Assets"
+            FontSize="15"
+            Visibility="Visible" />
+
+
+        <Border
+            x:Name="dragReceiverBorder"
+            Grid.RowSpan="2"
+            HorizontalAlignment="Stretch"
+            VerticalAlignment="Stretch"
+            Background="#902F2F2F"
+            Visibility="Collapsed">
+            <Grid
+                Width="600"
+                Height="300"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                Background="{ThemeResource SystemAltMediumLowColor}"
+                BorderBrush="Gray"
+                BorderThickness="1"
+                CornerRadius="4">
+                <Grid.Resources>
+                    <Style x:Key="DropMenuIconStyle" TargetType="TextBlock">
+                        <Setter Property="FontFamily" Value="Segoe MDL2 Assets" />
+                        <Setter Property="FontSize" Value="70" />
+                        <Setter Property="Foreground" Value="{ThemeResource SystemBaseMediumColor}" />
+                    </Style>
+                    <Style TargetType="RelativePanel">
+                        <Setter Property="AllowDrop" Value="True" />
+                        <Setter Property="Background" Value="Transparent" />
+                        <Setter Property="VerticalAlignment" Value="Stretch" />
+                        <Setter Property="HorizontalAlignment" Value="Stretch" />
+                    </Style>
+                </Grid.Resources>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="298" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="298" />
+                </Grid.ColumnDefinitions>
+                <Border
+                    Grid.Column="1"
+                    Width="1"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Stretch"
+                    BorderBrush="{ThemeResource SystemAltHighColor}"
+                    BorderThickness="1" />
+                <RelativePanel
+                    x:Name="addToLibraryMenuRelativePanel"
+                    Grid.Column="0"
+                    DragEnter="LibraryDragMenuItemRelativePanel0_DragEnter"
+                    DragLeave="LibraryDragMenuItemRelativePanel0_DragLeave"
+                    Drop="LibraryDragMenuItemRelativePanel0_DropAsync">
+                    <TextBlock
+                        x:Name="addToLibraryMenuIcon"
+                        AllowDrop="True"
+                        RelativePanel.AlignHorizontalCenterWithPanel="True"
+                        RelativePanel.AlignVerticalCenterWithPanel="True"
+                        Style="{StaticResource DropMenuIconStyle}"
+                        Text="&#xF8AA;" />
+                    <TextBlock
+                        Margin="0,10,0,0"
+                        AllowDrop="True"
+                        RelativePanel.AlignHorizontalCenterWith="addToLibraryMenuIcon"
+                        RelativePanel.Below="addToLibraryMenuIcon"
+                        Text="添加到库" />
+                </RelativePanel>
+                <RelativePanel
+                    x:Name="addToListMenuRelativePanel"
+                    Grid.Column="2"
+                    DragEnter="LibraryDragMenuItemRelativePanel1_DragEnter"
+                    DragLeave="LibraryDragMenuItemRelativePanel1_DragLeave"
+                    Drop="LibraryDragMenuItemRelativePanel1_DropAsync">
+                    <TextBlock
+                        x:Name="addToPlayingListMenuIcon"
+                        AllowDrop="True"
+                        RelativePanel.AlignHorizontalCenterWithPanel="True"
+                        RelativePanel.AlignVerticalCenterWithPanel="True"
+                        Style="{StaticResource DropMenuIconStyle}"
+                        Text="&#xE82E;" />
+                    <TextBlock
+                        Margin="0,10,0,0"
+                        AllowDrop="True"
+                        RelativePanel.AlignHorizontalCenterWith="addToPlayingListMenuIcon"
+                        RelativePanel.Below="addToPlayingListMenuIcon"
+                        Text="添加到播放列表" />
+                </RelativePanel>
+            </Grid>
+        </Border>
+
+        <Border
+            x:Name="loadingProgressRingCover"
+            HorizontalAlignment="Stretch"
+            VerticalAlignment="Stretch"
+            Background="#99000000"
+            BorderThickness="0"
+            CornerRadius="0">
+            <Grid>
+                <ProgressRing
+                    x:Name="loadingProgressRing"
+                    Width="60"
+                    Height="60"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    IsActive="True" />
+                <TextBlock
+                    Margin="0,80,0,0"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    FontSize="13"
+                    Text="加载LibVLCsharp组件......" />
+            </Grid>
+        </Border>
+    </Grid>
+</Page>

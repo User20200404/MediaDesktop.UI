@@ -1,0 +1,134 @@
+﻿<Page
+    x:Class="MediaDesktop.UI.Views.Pages.CurrentPlayingListPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:global="using:MediaDesktop.UI.Services"
+    xmlns:local="using:MediaDesktop.UI.Views.Pages"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:vm="using:MediaDesktop.UI.ViewModels"
+    Background="Transparent"
+    mc:Ignorable="d">
+
+
+    <Page.Resources>
+        <vm:IsPlayingConverter x:Key="IsPlayingConverter" />
+        <DataTemplate x:Key="currentPlayingListViewTemplate" x:DataType="vm:MediaDesktopItemViewModel">
+            <Button
+                Height="110"
+                Margin="2"
+                HorizontalAlignment="Stretch"
+                HorizontalContentAlignment="Stretch"
+                VerticalContentAlignment="Stretch"
+                BorderBrush="{ThemeResource AccentFillColorDefaultBrush}"
+                BorderThickness="0"
+                CornerRadius="4"
+                DoubleTapped="PlayingListItem_DoubleTapped"
+                IsDoubleTapEnabled="True">
+                <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="200" />
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+
+                    <Border
+                        Grid.Column="0"
+                        Width="178"
+                        Height="100"
+                        VerticalAlignment="Center"
+                        CornerRadius="4">
+                        <Image
+                            HorizontalAlignment="Stretch"
+                            VerticalAlignment="Stretch"
+                            Source="{x:Bind ImagePath, Mode=OneWay, Converter={StaticResource ImageSourceConverter}}"
+                            Stretch="UniformToFill" />
+                    </Border>
+                    <StackPanel
+                        Grid.Column="1"
+                        Orientation="Vertical"
+                        Spacing="3">
+                        <TextBlock
+                            VerticalAlignment="Top"
+                            FontSize="16"
+                            Text="{x:Bind Title, Mode=OneWay}" />
+                        <TextBlock
+                            MaxWidth="500"
+                            MaxHeight="90"
+                            FontSize="13"
+                            Foreground="Gray"
+                            Text="{x:Bind SubTitle, Mode=OneWay}"
+                            TextWrapping="Wrap" />
+                    </StackPanel>
+
+                    <StackPanel
+                        Grid.Column="2"
+                        Margin="0,0,50,0"
+                        HorizontalAlignment="Right"
+                        VerticalAlignment="Center"
+                        Orientation="Horizontal"
+                        Spacing="25">
+                        <StackPanel.Resources>
+                            <Style TargetType="Button">
+                                <Setter Property="Width" Value="50" />
+                                <Setter Property="Height" Value="50" />
+                                <Setter Property="CornerRadius" Value="25" />
+                                <Setter Property="FontFamily" Value="Segoe MDL2 Assets" />
+                            </Style>
+                        </StackPanel.Resources>
+
+                        <Button
+                            Command="{x:Bind MediaItemViewModel.TogglePlayStatusCommand}"
+                            CommandParameter="{x:Bind global:GlobalResources.MediaDesktopPlayer}"
+                            Content="{x:Bind MediaItemViewModel.RuntimeDataSet.IsMediaPlaying, Mode=OneWay, Converter={StaticResource IsPlayingConverter}}"
+                            DoubleTapped="{x:Bind global:GlobalResources.RoutedEventInterupter}" />
+
+                        <Button
+                            Command="{x:Bind MediaItemViewModel.RemoveFromMediaPlayingListCommand}"
+                            CommandParameter="{x:Bind global:GlobalResources.ViewModelCollection.CurrentPlayingList, Mode=OneWay}"
+                            Content="&#xE74D;" />
+                    </StackPanel>
+
+
+                    <StackPanel Orientation="Vertical" />
+                </Grid>
+            </Button>
+        </DataTemplate>
+    </Page.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <RelativePanel Margin="12">
+            <TextBlock
+                x:Name="labelTextBlock"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Center"
+                FontWeight="Bold"
+                Text="当前播放列表" />
+            <StackPanel
+                Margin="7"
+                Orientation="Horizontal"
+                RelativePanel.Below="labelTextBlock">
+                <StackPanel.Resources>
+                    <Style TargetType="TextBlock">
+                        <Setter Property="FontSize" Value="15" />
+                    </Style>
+                </StackPanel.Resources>
+                <TextBlock Text="共    " />
+                <TextBlock FontWeight="Bold" Text="{x:Bind global:GlobalResources.ViewModelCollection.CurrentPlayingList.Count, Mode=OneWay}" />
+                <TextBlock Text=" 个项目" />
+            </StackPanel>
+        </RelativePanel>
+
+        <ListView
+            x:Name="listView"
+            Grid.Row="1"
+            ItemTemplate="{StaticResource currentPlayingListViewTemplate}"
+            ItemsSource="{x:Bind global:GlobalResources.ViewModelCollection.CurrentPlayingList, Mode=OneWay}"
+            SelectionMode="None" />
+    </Grid>
+</Page>

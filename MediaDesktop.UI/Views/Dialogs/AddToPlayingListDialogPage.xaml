@@ -1,0 +1,105 @@
+﻿<Page
+    x:Class="MediaDesktop.UI.Views.Dialogs.AddToPlayingListDialogPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:global="using:MediaDesktop.UI.Services"
+    xmlns:local="using:MediaDesktop.UI.Views.Dialogs"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:vm="using:MediaDesktop.UI.ViewModels"
+    Background="Transparent"
+    mc:Ignorable="d">
+
+    <Page.Resources>
+        <vm:InvisbileIfEqualsConverter x:Key="InvisibleIfEqualsConverter" />
+        <vm:VisbileIfEqualsConverter x:Key="VisibleIfEqualsConverter" />
+        <DataTemplate x:Key="playingListTemplate" x:DataType="vm:MediaPlayingListViewModel">
+            <Grid Height="120" HorizontalAlignment="Stretch">
+                <StackPanel
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Center"
+                    Orientation="Horizontal"
+                    Spacing="10">
+                    <Border
+                        Width="192"
+                        Height="108"
+                        CornerRadius="4">
+                        <Image
+                            HorizontalAlignment="Stretch"
+                            VerticalAlignment="Stretch"
+                            Source="{x:Bind CoverImagePath, Mode=OneWay, Converter={StaticResource ImageSourceConverter}}"
+                            Stretch="UniformToFill" />
+                    </Border>
+
+                    <StackPanel
+                        VerticalAlignment="Top"
+                        Orientation="Vertical"
+                        Spacing="3">
+                        <TextBlock FontSize="25" Text="{x:Bind Title, Mode=OneWay}" />
+                        <StackPanel Orientation="Horizontal" Spacing="3">
+                            <TextBlock FontSize="16" Text="{x:Bind MediaItems.Count, Mode=OneWay}" />
+                            <TextBlock
+                                FontSize="16"
+                                Foreground="{ThemeResource SystemControlForegroundBaseLowBrush}"
+                                Text="个项目" />
+                        </StackPanel>
+                    </StackPanel>
+
+                    <TextBlock
+                        Width="250"
+                        Margin="10"
+                        FontSize="15"
+                        Foreground="{ThemeResource SystemControlForegroundBaseLowBrush}"
+                        Text="{x:Bind Description, Mode=OneWay}"
+                        TextWrapping="Wrap" />
+                </StackPanel>
+            </Grid>
+        </DataTemplate>
+    </Page.Resources>
+    <Grid>
+        <Frame x:Name="dialogFrame">
+            <RelativePanel>
+                <TextBlock
+                    x:Name="statusTextBlock"
+                    Margin="20,0,0,0"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Bottom"
+                    FontSize="15"
+                    Foreground="OrangeRed"
+                    Text="未选择播放列表。" />
+                <Button
+                    x:Name="addNewPlayingListButton"
+                    Margin="0,35,0,0"
+                    Background="{ThemeResource SystemAccentColorLight2}"
+                    Click="AddNewPlayingListButton_Clicked"
+                    Content="新建播放列表"
+                    Foreground="{ThemeResource SystemAltHighColor}"
+                    RelativePanel.AlignHorizontalCenterWith="statusTextBlock"
+                    RelativePanel.AlignTopWith="statusTextBlock"
+                    Visibility="{x:Bind global:GlobalResources.ViewModelCollection.MediaPlayingListViewModels.Count, Converter={StaticResource VisibleIfEqualsConverter}, ConverterParameter=0, Mode=OneWay}">
+                    <Button.Resources>
+                        <ResourceDictionary x:Key="Default" Source="/Resources/SystemThemedButtonDictionary.xaml" />
+                    </Button.Resources>
+                </Button>
+            </RelativePanel>
+        </Frame>
+        <ListView
+            x:Name="listView"
+            Margin="10,30,10,55"
+            IsItemClickEnabled="True"
+            ItemTemplate="{StaticResource playingListTemplate}"
+            ItemsSource="{x:Bind global:GlobalResources.ViewModelCollection.MediaPlayingListViewModels, Mode=OneWay}"
+            SelectionMode="Single"
+            Visibility="{x:Bind global:GlobalResources.ViewModelCollection.MediaPlayingListViewModels.Count, Converter={StaticResource InvisibleIfEqualsConverter}, Mode=OneWay, ConverterParameter=0}" />
+        <Button
+            x:Name="addNewPlayingListButton2"
+            Width="40"
+            Height="40"
+            HorizontalAlignment="Right"
+            VerticalAlignment="Bottom"
+            Click="AddNewPlayingListButton_Clicked"
+            Content="&#xE8F4;"
+            FontFamily="Segoe MDL2 Assets"
+            Visibility="{x:Bind global:GlobalResources.ViewModelCollection.MediaPlayingListViewModels.Count, Converter={StaticResource InvisibleIfEqualsConverter}, ConverterParameter=0, Mode=OneWay}" />
+    </Grid>
+</Page>

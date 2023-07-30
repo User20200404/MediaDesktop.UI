@@ -1,0 +1,224 @@
+﻿<Page
+    x:Class="MediaDesktop.UI.Views.Pages.SettingsPage_Personalize"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:ex="using:MediaDesktop.UI.Helpers.Extensions"
+    xmlns:global="using:MediaDesktop.UI.Services"
+    xmlns:local="using:MediaDesktop.UI.Views.Pages"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:vm="using:MediaDesktop.UI.ViewModels"
+    d:DataContext="{d:DesignInstance Type=vm:SettingsItemViewModel}"
+    Background="Transparent"
+    DataContext="{x:Bind global:GlobalResources.ViewModelCollection.SettingsItemViewModel, Mode=OneWay}"
+    mc:Ignorable="d">
+    <Page.Resources>
+        <vm:SelectEnumValueComboBoxConverter x:Key="SelectEnumValueComboBoxConverter" EnumType="ex:WindowBackdropStyle" />
+    </Page.Resources>
+
+    <Grid>
+        <StackPanel
+            HorizontalAlignment="Stretch"
+            VerticalAlignment="Top"
+            Orientation="Vertical"
+            Spacing="6">
+            <StackPanel.Resources>
+                <Style TargetType="Border">
+                    <Setter Property="CornerRadius" Value="4" />
+                    <Setter Property="BorderThickness" Value="0" />
+                    <Setter Property="Background" Value="{ThemeResource ButtonBackground}" />
+                    <Setter Property="Height" Value="65" />
+                    <Setter Property="Margin" Value="5,0,5,0" />
+                    <Setter Property="HorizontalAlignment" Value="Stretch" />
+                </Style>
+                <Style TargetType="Expander">
+                    <Setter Property="CornerRadius" Value="4" />
+                    <Setter Property="BorderThickness" Value="0" />
+                    <Setter Property="Background" Value="{ThemeResource ButtonBackground}" />
+                    <Setter Property="Height" Value="65" />
+                    <Setter Property="Margin" Value="5,0,5,0" />
+                    <Setter Property="HorizontalAlignment" Value="Stretch" />
+                </Style>
+            </StackPanel.Resources>
+            <Border>
+                <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="40" />
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="150" />
+                    </Grid.ColumnDefinitions>
+                    <TextBlock
+                        HorizontalAlignment="Right"
+                        VerticalAlignment="Center"
+                        FontFamily="Segoe MDL2 Assets"
+                        FontSize="20"
+                        Text="&#xE771;" />
+                    <StackPanel
+                        Grid.Column="1"
+                        Margin="20,0,0,0"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Center"
+                        Orientation="Vertical"
+                        Spacing="1">
+                        <TextBlock Text="窗口透明背景材质" />
+                        <TextBlock
+                            FontSize="12"
+                            Foreground="{ThemeResource SystemControlForegroundBaseMediumBrush}"
+                            Text="选择Windows 11系统风格窗口背景材质（更改设置后通常需要使窗口失去焦点，然后重新激活窗口）。" />
+                    </StackPanel>
+
+                    <ComboBox
+                        Grid.Column="3"
+                        Width="120"
+                        Margin="0,0,20,0"
+                        HorizontalAlignment="Right"
+                        VerticalAlignment="Center"
+                        SelectedItem="{Binding AcrylicMicaStyle, Converter={StaticResource SelectEnumValueComboBoxConverter}, Mode=TwoWay}">
+                        <x:String>None</x:String>
+                        <x:String>Acrylic</x:String>
+                        <x:String>Mica</x:String>
+                    </ComboBox>
+                </Grid>
+            </Border>
+            <Border>
+                <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="40" />
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="215" />
+                    </Grid.ColumnDefinitions>
+                    <TextBlock
+                        HorizontalAlignment="Right"
+                        VerticalAlignment="Center"
+                        FontFamily="Segoe MDL2 Assets"
+                        FontSize="20"
+                        Text="&#xE771;" />
+                    <StackPanel
+                        Grid.Column="1"
+                        Margin="20,0,0,0"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Center"
+                        Orientation="Vertical"
+                        Spacing="1">
+                        <TextBlock Text="遮罩层不透明度" />
+                        <TextBlock
+                            FontSize="12"
+                            Foreground="{ThemeResource SystemControlForegroundBaseMediumBrush}"
+                            Text="启用Acrylic或Mica透明材质时，该值决定了遮罩层（默认为黑色）的不透明度。对于深色背景，这通常意味着降低背景的饱和度。" />
+                    </StackPanel>
+
+                    <Slider
+                        Grid.Column="3"
+                        Width="165"
+                        Margin="20,0,20,0"
+                        HorizontalAlignment="Right"
+                        VerticalAlignment="Center"
+                        Maximum="1"
+                        Minimum="0"
+                        StepFrequency="0.01"
+                        Value="{Binding TintOpacity, Mode=TwoWay}" />
+                </Grid>
+            </Border>
+            <Border>
+                <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="40" />
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="215" />
+                    </Grid.ColumnDefinitions>
+                    <TextBlock
+                        HorizontalAlignment="Right"
+                        VerticalAlignment="Center"
+                        FontFamily="Segoe MDL2 Assets"
+                        FontSize="20"
+                        Text="&#xE771;" />
+                    <StackPanel
+                        Grid.Column="1"
+                        Margin="20,0,0,0"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Center"
+                        Orientation="Vertical"
+                        Spacing="1">
+                        <TextBlock Text="透光度" />
+                        <TextBlock
+                            FontSize="12"
+                            Foreground="{ThemeResource SystemControlForegroundBaseMediumBrush}"
+                            Text="启用Acrylic或Mica透明材质时，该值决定了窗口在激活时，材质背景的饱和度。" />
+                    </StackPanel>
+
+                    <Slider
+                        Grid.Column="3"
+                        Width="165"
+                        Margin="20,0,20,0"
+                        HorizontalAlignment="Right"
+                        VerticalAlignment="Center"
+                        Maximum="1"
+                        Minimum="0"
+                        StepFrequency="0.01"
+                        Value="{Binding LuminosityOpacity, Mode=TwoWay}" />
+                </Grid>
+            </Border>
+            <Expander
+                Height="Auto"
+                HorizontalAlignment="Stretch"
+                HorizontalContentAlignment="Stretch"
+                IsExpanded="True">
+                <Expander.Header>
+                    <Grid
+                        Margin="-16,0,0,0"
+                        HorizontalAlignment="Stretch"
+                        VerticalAlignment="Stretch">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="40" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="65" />
+                            <RowDefinition Height="1" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+                        <TextBlock
+                            HorizontalAlignment="Right"
+                            VerticalAlignment="Center"
+                            FontFamily="Segoe MDL2 Assets"
+                            FontSize="20"
+                            Text="&#xE771;" />
+                        <StackPanel
+                            Grid.Column="1"
+                            Margin="20,0,0,0"
+                            HorizontalAlignment="Left"
+                            VerticalAlignment="Center"
+                            Orientation="Vertical"
+                            Spacing="1">
+                            <TextBlock Text="为以下区域激活Acrylic或Mica材质效果" />
+                            <TextBlock
+                                FontSize="12"
+                                Foreground="{ThemeResource SystemControlForegroundBaseMediumBrush}"
+                                Text="选择界面应用系统材质的区域，未使用系统材质的区域将使用它们的默认背景色。" />
+                        </StackPanel>
+
+
+                    </Grid>
+                </Expander.Header>
+                <Expander.Content>
+                    <StackPanel
+                        Grid.Row="3"
+                        Grid.ColumnSpan="2"
+                        Margin="30,12,12,12"
+                        Orientation="Horizontal"
+                        Spacing="25">
+                        <CheckBox Content="导航栏" IsChecked="{Binding IsNavigationViewMaterialEnabled, Mode=TwoWay}" />
+                        <CheckBox Content="页面" IsChecked="{Binding IsPageMaterialEnabled, Mode=TwoWay}" />
+                        <CheckBox Content="播放控件" IsChecked="{Binding IsPlayBackControlMaterialEnabled, Mode=TwoWay}" />
+                        <CheckBox Content="标题栏" IsChecked="{Binding IsTitleBarMaterialEnabled, Mode=TwoWay}" />
+                    </StackPanel>
+                </Expander.Content>
+            </Expander>
+            <!--  这里以后需要专门定义一个UserControl来处理  -->
+        </StackPanel>
+
+    </Grid>
+</Page>

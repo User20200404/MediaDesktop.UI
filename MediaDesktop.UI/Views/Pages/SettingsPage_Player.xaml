@@ -1,0 +1,108 @@
+﻿<Page
+    x:Class="MediaDesktop.UI.Views.Pages.SettingsPage_Player"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:global="using:MediaDesktop.UI.Services"
+    xmlns:local="using:MediaDesktop.UI.Views.Pages"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:vm="using:MediaDesktop.UI.ViewModels"
+    d:DataContext="{d:DesignInstance Type=vm:SettingsItemViewModel}"
+    Background="Transparent"
+    DataContext="{x:Bind global:GlobalResources.ViewModelCollection.SettingsItemViewModel, Mode=OneWay}"
+    mc:Ignorable="d">
+
+    <Grid>
+        <StackPanel
+            HorizontalAlignment="Stretch"
+            VerticalAlignment="Top"
+            Orientation="Vertical"
+            Spacing="6">
+            <StackPanel.Resources>
+                <Style TargetType="Border">
+                    <Setter Property="CornerRadius" Value="4" />
+                    <Setter Property="BorderThickness" Value="0" />
+                    <Setter Property="Background" Value="{ThemeResource ButtonBackground}" />
+                    <Setter Property="Height" Value="65" />
+                    <Setter Property="Margin" Value="5,0,5,0" />
+                    <Setter Property="HorizontalAlignment" Value="Stretch" />
+                </Style>
+            </StackPanel.Resources>
+            <Border>
+                <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="40" />
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="100" />
+                    </Grid.ColumnDefinitions>
+                    <TextBlock
+                        HorizontalAlignment="Right"
+                        VerticalAlignment="Center"
+                        FontFamily="Segoe MDL2 Assets"
+                        FontSize="20"
+                        Text="&#xF211;" />
+                    <StackPanel
+                        Grid.Column="1"
+                        Margin="20,0,0,0"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Center"
+                        Orientation="Vertical"
+                        Spacing="1">
+                        <TextBlock Text="硬件解码" />
+                        <TextBlock
+                            FontSize="12"
+                            Foreground="{ThemeResource SystemControlForegroundBaseMediumBrush}"
+                            Text="降低CPU占用、无缝播放（可能需要重启应用）" />
+                    </StackPanel>
+                    <ToggleSwitch
+                        x:Name="enableHardwareDecodingSwitch"
+                        Grid.Column="3"
+                        IsOn="{Binding EnableHardwareDecoding, Mode=TwoWay}" />
+                </Grid>
+            </Border>
+
+            <Border>
+                <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="40" />
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <TextBlock
+                        HorizontalAlignment="Right"
+                        VerticalAlignment="Center"
+                        FontFamily="Segoe MDL2 Assets"
+                        FontSize="20"
+                        Text="&#xE8E5;" />
+                    <StackPanel
+                        Grid.Column="1"
+                        Margin="20,0,0,0"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Center"
+                        Orientation="Vertical"
+                        Spacing="1">
+                        <TextBlock Text="文件缓冲长度(ms)" />
+                        <TextBlock
+                            FontSize="12"
+                            Foreground="{ThemeResource SystemControlForegroundBaseMediumBrush}"
+                            Text="较高的缓冲长度意味着更高的内存占用，通常采用必要的较低值。" />
+                    </StackPanel>
+                    <Slider
+                        x:Name="fileCachingSlider"
+                        Grid.Column="2"
+                        MinWidth="100"
+                        MaxWidth="550"
+                        Margin="150,0,25,0"
+                        HorizontalAlignment="Stretch"
+                        VerticalAlignment="Center"
+                        Maximum="1500"
+                        Minimum="100"
+                        StepFrequency="1"
+                        Value="{Binding FileCaching, Mode=TwoWay}" />
+                </Grid>
+            </Border>
+        </StackPanel>
+
+    </Grid>
+</Page>

@@ -1,0 +1,117 @@
+﻿<Page
+    x:Class="MediaDesktop.UI.Views.Dialogs.ModifyItemDialogPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="using:MediaDesktop.UI.Views.Dialogs"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:model="using:MediaDesktop.UI.ViewModels"
+    xmlns:vm="using:MediaDesktop.UI.ViewModels"
+    d:DataContext="{d:DesignInstance Type=model:MediaDesktopItemViewModel}"
+    Background="Transparent"
+    mc:Ignorable="d" >
+    <Page.Resources>
+        <vm:BooleanInverseConverter x:Key="BooleanInverseConverter" />
+        <vm:VisbileIfEqualsConverter x:Key="VisbileIfEqualsConverter" />
+    </Page.Resources>
+
+    <Grid x:Name="grid">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="50" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="20" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="500" />
+            <ColumnDefinition Width="Auto" />
+        </Grid.ColumnDefinitions>
+
+        <TextBlock
+            Grid.ColumnSpan="2"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Top"
+            FontSize="20"
+            Text="{x:Bind Tag.ToString(), Mode=OneWay}" />
+
+        <StackPanel
+            Grid.Row="1"
+            Grid.Column="0"
+            Orientation="Vertical"
+            Spacing="15">
+            <StackPanel.Resources>
+                <Style TargetType="TextBlock">
+                    <Setter Property="FontSize" Value="14" />
+                    <Setter Property="Width" Value="60" />
+                    <Setter Property="TextAlignment" Value="Right" />
+                    <Setter Property="VerticalAlignment" Value="Bottom" />
+                </Style>
+                <Style TargetType="Button">
+                    <Setter Property="Width" Value="50" />
+                    <Setter Property="Height" Value="33" />
+                    <Setter Property="FontSize" Value="12" />
+                    <Setter Property="CornerRadius" Value="4" />
+                </Style>
+                <Style TargetType="TextBox">
+                    <Setter Property="MinWidth" Value="350" />
+                    <Setter Property="MaxWidth" Value="350" />
+                    <Setter Property="CornerRadius" Value="4" />
+                    <Setter Property="AllowDrop" Value="True"/>
+                </Style>
+            </StackPanel.Resources>
+            <StackPanel Orientation="Horizontal" Spacing="5">
+                <TextBlock Text="主 标 题" />
+                <TextBox Text="{Binding Title, Mode=TwoWay}" />
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" Spacing="5">
+                <TextBlock Text="副 标 题" />
+                <TextBox Text="{Binding SubTitle, Mode=TwoWay}" />
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" Spacing="5">
+                <TextBlock Text="文件路径" />
+                <TextBox
+                    x:Name="mediaPathTextBox"
+                    IsEnabled="{x:Bind trueViewModel.MediaItemViewModel.RuntimeDataSet.IsMediaPlaying, Converter={StaticResource BooleanInverseConverter}, Mode=OneWay}"
+                    Text="{Binding MediaPath, Mode=TwoWay}"
+                    TextChanged="MediaPathTextBox_TextChanged" DragOver="{x:Bind vm:CommonUIMethods.DragOverEventHandlerForFileDrop}"  Drop="{x:Bind vm:CommonUIMethods.TextBoxGetDropFilePathEventHandler}"/>
+                <Button
+                    Click="BrowseButton_Click"
+                    Content="浏览"
+                    IsEnabled="{Binding ElementName=mediaPathTextBox, Path=IsEnabled, Mode=OneWay}"
+                    Tag="{x:Bind mediaPathTextBox}" />
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" Spacing="5">
+                <TextBlock Text="封面路径" />
+                <TextBox x:Name="imagePathTextBox" Text="{Binding ImagePath, Mode=TwoWay}"  DragOver="{x:Bind vm:CommonUIMethods.DragOverEventHandlerForFileDrop}"  Drop="{x:Bind vm:CommonUIMethods.TextBoxGetDropFilePathEventHandler}"/>
+                <Button
+                    Click="BrowseButton_Click"
+                    Content="浏览"
+                    Tag="{x:Bind imagePathTextBox}" />
+            </StackPanel>
+            <TextBlock
+                Width="Auto"
+                Margin="20,0,0,0"
+                HorizontalAlignment="Left"
+                Foreground="OrangeRed"
+                Text="文件路径编辑在项目正在播放时不可用。"
+                Visibility="{Binding ElementName=mediaPathTextBox, Path=IsEnabled, Converter={StaticResource VisbileIfEqualsConverter}, ConverterParameter=False, Mode=OneWay}" />
+            <TextBlock
+                x:Name="notifyTextBlock"
+                Width="Auto"
+                Margin="20,0,0,0"
+                HorizontalAlignment="Left"
+                Foreground="OrangeRed" />
+        </StackPanel>
+
+        <Border x:Name="imageBorder"
+            Grid.Row="1"
+            Grid.Column="1"
+            Width="320"
+            Height="180"
+            BorderBrush="Gray"
+            BorderThickness="1"
+            CornerRadius="4">
+            <Image x:Name="previewImage" Source="{Binding ImagePath, Mode=OneWay, Converter={StaticResource ImageSourceConverter}}" />
+        </Border>
+    </Grid>
+</Page>
