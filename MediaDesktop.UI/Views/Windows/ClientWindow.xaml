@@ -49,10 +49,6 @@
             BorderBrush="{ThemeResource SystemBaseMediumLowColor}"
             BorderThickness="1"
             CornerRadius="4" />
-        <Image
-            x:Name="bitmap"
-            Width="1920"
-            Height="1080"
-            x:FieldModifier="public" />
+
     </Grid>
 </Window>

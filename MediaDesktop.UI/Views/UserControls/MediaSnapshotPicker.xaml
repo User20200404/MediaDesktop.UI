@@ -7,6 +7,49 @@
     xmlns:local="using:MediaDesktop.UI.Views.UserControls"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
-
-    <Grid />
+    <UserControl.Resources>
+        <DataTemplate x:Key="GridViewImageTemplate" x:DataType="SoftwareBitmapSource">
+            <Border
+                Width="200"
+                Height="108"
+                BorderThickness="1"
+                CornerRadius="4">
+                <Image
+                    HorizontalAlignment="Stretch"
+                    VerticalAlignment="Stretch"
+                    Source="{Binding}"
+                    Stretch="UniformToFill" />
+            </Border>
+        </DataTemplate>
+    </UserControl.Resources>
+    <Grid>
+        <Border
+            Margin="1"
+            HorizontalAlignment="Stretch"
+            VerticalAlignment="Stretch"
+            Background="#AAFFFFFF"
+            BorderThickness="3"
+            CornerRadius="4">
+            <Grid>
+                <Image
+                    x:Name="backBitmapImage"
+                    HorizontalAlignment="Stretch"
+                    VerticalAlignment="Stretch"
+                    Stretch="UniformToFill">
+                    <Image.Source>
+                        <SoftwareBitmapSource x:Name="backBitmapSource" />
+                    </Image.Source>
+                </Image>
+                <Image
+                    x:Name="foreBitmapImage"
+                    HorizontalAlignment="Stretch"
+                    VerticalAlignment="Stretch"
+                    Stretch="UniformToFill">
+                    <Image.Source>
+                        <SoftwareBitmapSource x:Name="foreBitmapSource" />
+                    </Image.Source>
+                </Image>
+            </Grid>
+        </Border>
+    </Grid>
 </UserControl>

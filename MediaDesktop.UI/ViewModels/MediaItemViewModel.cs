@@ -319,7 +319,7 @@ namespace MediaDesktop.UI.ViewModels
             {
                 MediaItem = mediaItem;
                 MediaPlayer = new MediaPlayer(Media);
-                Media.Parse(MediaParseOptions.ParseLocal);
+                Media.Parse(MediaParseOptions.ParseLocal).Wait();
                 EventStartup();
             }
 
@@ -494,7 +494,7 @@ namespace MediaDesktop.UI.ViewModels
             #region Public Properties
             public long MediaLength
             {
-                get { return MediaPlayer.Length; }
+                get { return Media.Duration; }
             }
 
             public float MediaFps

@@ -6,6 +6,7 @@
     xmlns:global="using:MediaDesktop.UI.Services"
     xmlns:local="using:MediaDesktop.UI.Views.Windows"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:uc="using:MediaDesktop.UI.Views.UserControls"
     xmlns:vm="using:MediaDesktop.UI.ViewModels"
     Background="Transparent"
     mc:Ignorable="d">
@@ -356,6 +357,13 @@
                     Content="^"
                     FontSize="12"
                     Visibility="Collapsed" />
+                <uc:MediaSnapshotPicker
+                    Width="320"
+                    Height="180"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    Background="#55FFFFFF"
+                    FilePath="{x:Bind global:GlobalResources.ViewModelCollection.CurrentDesktopItemViewModel.MediaPath, Mode=OneWay}" />
             </Grid>
         </NavigationView>
     </Grid>

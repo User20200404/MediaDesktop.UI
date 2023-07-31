@@ -20,10 +20,11 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Media;
 using MediaDesktop.UI.Views.Pages;
 using MediaDesktop.UI.Helpers;
+using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace MediaDesktop.UI.ViewModels
 {
-    public class SettingsItemViewModel : INotifyPropertyChanged
+    public class SettingsItemViewModel : ObservableObject
     {
         private SettingsItem settingsItem;
         private readonly string defaultKey = "Value";
@@ -512,12 +513,5 @@ namespace MediaDesktop.UI.ViewModels
             }
 
         }
-        #region Notify Events&Methods
-        public event PropertyChangedEventHandler PropertyChanged;
-        protected void OnPropertyChanged(string propertyName)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName)); 
-        }
-        #endregion
     }
 }

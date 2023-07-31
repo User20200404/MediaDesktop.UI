@@ -430,7 +430,7 @@ namespace MediaDesktop.UI.ViewModels
                 {
                     CurrentDesktopItemViewModel = GetCurrentPlayingModel();
                     UpdateHistoryLevel(CurrentDesktopItemViewModel, HistoryLevelUpdateReason.ItemPlayed);
-                    OnPropertyChanged(nameof(CurrentDesktopItemViewModel));
+                    //OnPropertyChanged(nameof(CurrentDesktopItemViewModel));
                 }
             }
         }
