@@ -17,7 +17,8 @@
     <Page.Resources>
         <models:IsFavouriteConverter x:Key="IsFavouriteConverter" />
         <models:IsPlayingConverter x:Key="IsPlayingConverter" />
-        <models:VisbileIfEqualsConverter x:Key="VisbileIfEqualsConverter" />
+        <models:VisibleIfEqualsConverter x:Key="VisibleIfEqualsConverter" />
+        <models:FullOpacityIfEqualsConverter x:Key="FullOpacityIfEqualsConverter" />
         <models:FloatToVector x:Key="FloatToVector" />
         <Style x:Key="LibraryGridViewStyle" TargetType="GridView">
             <Setter Property="CanDragItems" Value="True" />
@@ -50,7 +51,7 @@
             <Setter Property="HorizontalAlignment" Value="Center" />
             <Setter Property="VerticalAlignment" Value="Center" />
         </Style>
-        <MenuFlyout x:Key="LibraryItemRightTapMenu" ShowMode="TransientWithDismissOnPointerMoveAway">
+        <MenuFlyout x:Key="LibraryItemRightTapMenu" ShowMode="Standard">
             <MenuFlyoutItem
                 Command="{Binding MediaItemViewModel.TogglePlayStatusCommand}"
                 CommandParameter="{x:Bind global:GlobalResources.MediaDesktopPlayer}"
@@ -151,7 +152,7 @@
                                 Content="{x:Bind MediaItemViewModel.RuntimeDataSet.IsMediaPlaying, Converter={StaticResource IsPlayingConverter}, Mode=OneWay}"
                                 DoubleTapped="{x:Bind global:GlobalResources.RoutedEventInterupter}" />
                             <TextBlock
-                                MaxWidth="195"
+                                MaxWidth="{x:Bind global:GlobalResources.ViewModelCollection.SettingsItemViewModel.LibraryItemScale, Converter={StaticResource BasicCalculateConverter}, ConverterParameter=*230, Mode=OneWay}"
                                 HorizontalAlignment="Left"
                                 VerticalAlignment="Center"
                                 FontSize="{x:Bind global:GlobalResources.ViewModelCollection.SettingsItemViewModel.LibraryItemScale, Converter={StaticResource BasicCalculateConverter}, ConverterParameter=*18, Mode=OneWay}"
@@ -339,7 +340,7 @@
                                 Content="{x:Bind MediaItemViewModel.RuntimeDataSet.IsMediaPlaying, Converter={StaticResource IsPlayingConverter}, Mode=OneWay}"
                                 DoubleTapped="{x:Bind global:GlobalResources.RoutedEventInterupter}" />
                             <TextBlock
-                                MaxWidth="195"
+                                MaxWidth="{x:Bind global:GlobalResources.ViewModelCollection.SettingsItemViewModel.LibraryItemScale, Converter={StaticResource BasicCalculateConverter}, ConverterParameter=*230, Mode=OneWay}"
                                 HorizontalAlignment="Left"
                                 VerticalAlignment="Center"
                                 FontSize="{x:Bind global:GlobalResources.ViewModelCollection.SettingsItemViewModel.LibraryItemScale, Converter={StaticResource BasicCalculateConverter}, ConverterParameter=*18, Mode=OneWay}"
@@ -423,10 +424,16 @@
                 FontSize="30"
                 Header="所有">
                 <Grid Background="Transparent">
-                    <StackPanel Style="{StaticResource NoItemStackPanelStyle}" Visibility="{x:Bind ViewModelCollection.ViewModelItems.Count, Converter={StaticResource VisbileIfEqualsConverter}, ConverterParameter=0, Mode=OneWay}">
+                    <StackPanel Opacity="{x:Bind ViewModelCollection.ViewModelItems.Count, Converter={StaticResource FullOpacityIfEqualsConverter}, ConverterParameter=0, Mode=OneWay}" Style="{StaticResource NoItemStackPanelStyle}">
                         <TextBlock Style="{StaticResource NoItemNotifyIconStyle}" Text="&#xE82E;" />
                         <TextBlock Style="{StaticResource NoItemNotifyMainTextStyle}" Text="这里好像还没有项目" />
                         <TextBlock Style="{StaticResource NoItemNotifySecondaryTextStyle}" Text="点击右上角按钮添加项目吧~" />
+                        <StackPanel.OpacityTransition>
+                            <ScalarTransition />
+                        </StackPanel.OpacityTransition>
+                        <StackPanel.TranslationTransition>
+                            <Vector3Transition />
+                        </StackPanel.TranslationTransition>
                     </StackPanel>
                     <GridView
                         x:Name="gridView_All"
@@ -442,10 +449,16 @@
                 FontSize="30"
                 Header="收藏">
                 <Grid>
-                    <StackPanel Style="{StaticResource NoItemStackPanelStyle}" Visibility="{x:Bind ViewModelCollection.ViewModelItems_Favourite.Count, Converter={StaticResource VisbileIfEqualsConverter}, ConverterParameter=0, Mode=OneWay}">
+                    <StackPanel Opacity="{x:Bind ViewModelCollection.ViewModelItems_Favourite.Count, Converter={StaticResource FullOpacityIfEqualsConverter}, ConverterParameter=0, Mode=OneWay}" Style="{StaticResource NoItemStackPanelStyle}">
                         <TextBlock Style="{StaticResource NoItemNotifyIconStyle}" Text="&#xEB52;" />
                         <TextBlock Style="{StaticResource NoItemNotifyMainTextStyle}" Text="这里将会显示你收藏的项目" />
                         <TextBlock Style="{StaticResource NoItemNotifySecondaryTextStyle}" Text="快去将项目添加到你的收藏列表吧~" />
+                        <StackPanel.OpacityTransition>
+                            <ScalarTransition />
+                        </StackPanel.OpacityTransition>
+                        <StackPanel.TranslationTransition>
+                            <Vector3Transition />
+                        </StackPanel.TranslationTransition>
                     </StackPanel>
 
                     <GridView
@@ -460,10 +473,16 @@
                 FontSize="30"
                 Header="历史">
                 <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-                    <StackPanel Style="{StaticResource NoItemStackPanelStyle}" Visibility="{x:Bind ViewModelCollection.ViewModelItems_History.Count, Converter={StaticResource VisbileIfEqualsConverter}, ConverterParameter=0, Mode=OneWay}">
+                    <StackPanel Opacity="{x:Bind ViewModelCollection.ViewModelItems_History.Count, Converter={StaticResource FullOpacityIfEqualsConverter}, ConverterParameter=0, Mode=OneWay}" Style="{StaticResource NoItemStackPanelStyle}">
                         <TextBlock Style="{StaticResource NoItemNotifyIconStyle}" Text="&#xE823;" />
                         <TextBlock Style="{StaticResource NoItemNotifyMainTextStyle}" Text="看来你最近没有播放任何项目呢" />
                         <TextBlock Style="{StaticResource NoItemNotifySecondaryTextStyle}" Text="挑几个喜欢的试试吧~" />
+                        <StackPanel.OpacityTransition>
+                            <ScalarTransition />
+                        </StackPanel.OpacityTransition>
+                        <StackPanel.TranslationTransition>
+                            <Vector3Transition />
+                        </StackPanel.TranslationTransition>
                     </StackPanel>
 
                     <GridView
@@ -483,10 +502,16 @@
                 FontSize="30"
                 Header="播放列表">
                 <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-                    <StackPanel Style="{StaticResource NoItemStackPanelStyle}" Visibility="{x:Bind ViewModelCollection.MediaPlayingListViewModels.Count, Converter={StaticResource VisbileIfEqualsConverter}, ConverterParameter=0, Mode=OneWay}">
+                    <StackPanel Opacity="{x:Bind ViewModelCollection.MediaPlayingListViewModels.Count, Converter={StaticResource FullOpacityIfEqualsConverter}, ConverterParameter=0, Mode=OneWay}" Style="{StaticResource NoItemStackPanelStyle}">
                         <TextBlock Style="{StaticResource NoItemNotifyIconStyle}" Text="&#xE7BC;" />
                         <TextBlock Style="{StaticResource NoItemNotifyMainTextStyle}" Text="播放列表空空如也" />
                         <TextBlock Style="{StaticResource NoItemNotifySecondaryTextStyle}" Text="点击右上角按钮添加播放列表" />
+                        <StackPanel.OpacityTransition>
+                            <ScalarTransition />
+                        </StackPanel.OpacityTransition>
+                        <StackPanel.TranslationTransition>
+                            <Vector3Transition />
+                        </StackPanel.TranslationTransition>
                     </StackPanel>
 
                     <Frame x:Name="playingListFrame" />

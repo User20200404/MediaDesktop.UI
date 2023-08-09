@@ -46,6 +46,32 @@ namespace MediaDesktop.UI.ViewModels
         }
 
         #region MVVM Settings Data
+
+        public ExtractedFrameNamePolicy ExtractedFrameNamePolicy
+        {
+            get { return settingsItem.ExtractedFrameNamePolicy; }
+            set
+            {
+                if (settingsItem.ExtractedFrameNamePolicy != value)
+                {
+                    settingsItem.ExtractedFrameNamePolicy = value;
+                    OnPropertyChanged(nameof(ExtractedFrameNamePolicy));
+                }
+            }
+        }
+
+        public ExtractedFramePosition ExtractedFramePosition
+        {
+            get { return settingsItem.ExtractedFramePosition; }
+            set 
+            {
+                if(settingsItem.ExtractedFramePosition != value)
+                {
+                    settingsItem.ExtractedFramePosition = value;
+                    OnPropertyChanged(nameof(ExtractedFramePosition));
+                }
+            }
+        }
         public float LibraryItemScale
         {
             get { return settingsItem.LibraryItemScale; }
@@ -53,8 +79,8 @@ namespace MediaDesktop.UI.ViewModels
             {
                 if (settingsItem.LibraryItemScale != value)
                 {
-                    if(value >= 0.4 && value <=1.8)
-                    settingsItem.LibraryItemScale = value;
+                    if (value >= 0.4 && value <= 1.8)
+                        settingsItem.LibraryItemScale = value;
                     OnPropertyChanged(nameof(LibraryItemScale));
                 }
             }
@@ -387,7 +413,9 @@ namespace MediaDesktop.UI.ViewModels
             IsPageMaterialEnabled = iniData.GetValueTypeValueOrDefault(nameof(IsPageMaterialEnabled), defaultKey, true);
             IsPlayBackControlMaterialEnabled = iniData.GetValueTypeValueOrDefault(nameof(IsPlayBackControlMaterialEnabled), defaultKey, true);
             IsTitleBarMaterialEnabled = iniData.GetValueTypeValueOrDefault(nameof(IsTitleBarMaterialEnabled), defaultKey, true);
-            LibraryItemScale = iniData.GetValueTypeValueOrDefault(nameof(LibraryItemScale), defaultKey,1.0f);
+            LibraryItemScale = iniData.GetValueTypeValueOrDefault(nameof(LibraryItemScale), defaultKey, 1.0f);
+            ExtractedFrameNamePolicy = iniData.GetValueTypeValueOrDefault(nameof(ExtractedFrameNamePolicy), defaultKey, ExtractedFrameNamePolicy.AppendExtension);
+            ExtractedFramePosition = iniData.GetValueTypeValueOrDefault(nameof(ExtractedFramePosition), defaultKey, ExtractedFramePosition.SourceFolder);
         }
 
         public SettingsItemViewModel()
@@ -419,6 +447,8 @@ namespace MediaDesktop.UI.ViewModels
             data.Sections.AddSection(nameof(IsPlayBackControlMaterialEnabled));
             data.Sections.AddSection(nameof(IsTitleBarMaterialEnabled));
             data.Sections.AddSection(nameof(LibraryItemScale));
+            data.Sections.AddSection(nameof(ExtractedFramePosition));
+            data.Sections.AddSection(nameof(ExtractedFrameNamePolicy));
 
             data.Sections[nameof(MediaItemRecordINIPath)].AddKey(defaultKey, MediaItemRecordINIPath);
             data.Sections[nameof(MediaPlayingListINIDir)].AddKey(defaultKey, MediaPlayingListINIDir);
@@ -438,6 +468,8 @@ namespace MediaDesktop.UI.ViewModels
             data.Sections[nameof(IsPlayBackControlMaterialEnabled)].AddKey(defaultKey, IsPlayBackControlMaterialEnabled.ToString());
             data.Sections[nameof(IsTitleBarMaterialEnabled)].AddKey(defaultKey, IsTitleBarMaterialEnabled.ToString());
             data.Sections[nameof(LibraryItemScale)].AddKey(defaultKey, LibraryItemScale.ToString());
+            data.Sections[nameof(ExtractedFramePosition)].AddKey(defaultKey, ExtractedFramePosition.ToString());
+            data.Sections[nameof(ExtractedFrameNamePolicy)].AddKey(defaultKey, ExtractedFrameNamePolicy.ToString());
             return data;
         }
 

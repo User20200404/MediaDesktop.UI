@@ -54,7 +54,8 @@ namespace MediaDesktop.UI.ViewModels
             {
                 if (mediaDesktopItem.ImagePath != value)
                 {
-                    mediaDesktopItem.ImagePath = value; OnPropertyChanged(nameof(ImagePath));
+                    mediaDesktopItem.ImagePath = value;
+                    OnPropertyChanged(nameof(ImagePath));
                 }
             }
         }

@@ -106,7 +106,7 @@ namespace MediaDesktop.UI.Views.Pages
         private void AnimateControls()
         {
             (controlGroupBorder.RenderTransform as TranslateTransform).Y = controlGroupBorder.ActualHeight;
-            (Resources["ControlPanelShowAnimation"] as Storyboard).Begin();
+            controlPanelShowStoryboard.Begin();
             controlGroupBorder.Visibility = Visibility.Visible;
         }
 
@@ -148,7 +148,7 @@ namespace MediaDesktop.UI.Views.Pages
         {
             isSlidingTemp = true;
             isPlayingTemp = CurrentMediaRuntimeDataSet?.IsMediaPlaying ?? false;
-            ProgressSlider_ValueChanged(progressSlider, null);
+            ProgressSlider_ValueChanged(progressSlider, null); //pointer pressing but no dragging does not trigger ValueChanged event. User may want to set media position by once-click, we manually trigger this event.
         }
 
         private void ProgressSlider_PointerReleased(object sender, PointerRoutedEventArgs e)
@@ -196,7 +196,9 @@ namespace MediaDesktop.UI.Views.Pages
 
         private void ShowControlPanelButton_Click(object sender, RoutedEventArgs e)
         {
-            (Resources["ControlPanelShowAnimation"] as Storyboard).Begin();
+            //(Resources["ControlPanelShowAnimation"] as Storyboard).Begin();
+            controlPanelShowAnimation.From = controlGroupBorder.ActualHeight;
+            controlPanelShowStoryboard.Begin();
             pageBackgroundLayerMaskGrid.SetValue(Grid.RowSpanProperty, 1);
             contentFrame.SetValue(Grid.RowSpanProperty, 1);
             showControlPanelButton.Visibility = Visibility.Collapsed;
@@ -204,9 +206,9 @@ namespace MediaDesktop.UI.Views.Pages
 
         private void HideControlPanelButton_Click(object sender, RoutedEventArgs e)
         {
-            Storyboard storyBoard = Resources["ControlPanelHideAnimation"] as Storyboard;
-            controlPanelHideEndKeyFrame.Value = controlGroupBorder.ActualHeight;
-            storyBoard.Begin();
+            //Storyboard storyBoard = Resources["ControlPanelHideAnimation"] as Storyboard;
+            controlPanelHideAnimation.To = controlGroupBorder.ActualHeight;
+            controlPanelHideStoryboard.Begin();
             pageBackgroundLayerMaskGrid.SetValue(Grid.RowSpanProperty, 2);
             contentFrame.SetValue(Grid.RowSpanProperty, 2);
             showControlPanelButton.Visibility = Visibility.Visible;

@@ -64,6 +64,19 @@ namespace MediaDesktop.UI.ViewModels
             }
         }
 
+        public FileStream OpenedFileStream
+        {
+            get { return mediaItem.OpenedFileStream; }
+            private set
+            {
+                if(mediaItem.OpenedFileStream != value) 
+                {
+                    mediaItem.OpenedFileStream = value;
+                    OnPropertyChanged(nameof(OpenedFileStream));
+                }
+            }
+        }
+
 
         #endregion
 
@@ -79,10 +92,10 @@ namespace MediaDesktop.UI.ViewModels
                 return;
 
             this.libVLC = libVLC;
-            int fileCaching = 500;
-            if (GlobalResources.IsInitialized)
-                fileCaching = GlobalResources.ViewModelCollection.SettingsItemViewModel.FileCaching;
-            Media = new Media(libVLC, new Uri(MediaPath), "--file-caching=" + fileCaching.ToString());
+
+            //FileStream fileStream = File.Open(MediaPath, FileMode.Open, FileAccess.Read,FileShare.Read);
+            //StreamMediaInput input = new StreamMediaInput(fileStream);
+            Media = new Media(libVLC, MediaPath);
             if (RuntimeDataSet != null)
             {
                 RuntimeDataSet.ReLoad(mediaItem);
@@ -319,6 +332,7 @@ namespace MediaDesktop.UI.ViewModels
             {
                 MediaItem = mediaItem;
                 MediaPlayer = new MediaPlayer(Media);
+                MediaPlayer.FileCaching = (uint)GlobalResources.ViewModelCollection.SettingsItemViewModel.FileCaching;
                 Media.Parse(MediaParseOptions.ParseLocal).Wait();
                 EventStartup();
             }
@@ -506,9 +520,9 @@ namespace MediaDesktop.UI.ViewModels
             {
                 get
                 {
-                    uint width=0, height = 0;
-                    MediaPlayer.Size(0, ref width, ref height);
-                    return new Size((int)width,(int)height);
+                    uint width = 0, height = 0;
+                    MediaPlayer.Size(0,ref width, ref height);
+                    return new Size((int)width, (int)height);
                 }
             }
 

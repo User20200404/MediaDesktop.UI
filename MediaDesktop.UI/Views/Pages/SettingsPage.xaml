@@ -6,6 +6,7 @@
     xmlns:global="using:MediaDesktop.UI.Services"
     xmlns:local="using:MediaDesktop.UI.Views.Pages"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:uc="using:MediaDesktop.UI.Views.UserControls"
     xmlns:vm="using:MediaDesktop.UI.ViewModels"
     Background="Transparent"
     CacheMode="BitmapCache"
@@ -44,6 +45,7 @@
             Grid.Row="1"
             CacheSize="5"
             IsNavigationStackEnabled="False" />
+
     </Grid>
 
 </Page>

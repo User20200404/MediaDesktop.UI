@@ -187,6 +187,41 @@
                             Content="浏览" />
                     </Grid>
                 </Border>
+
+                <Expander
+                    Margin="5,0,5,0"
+                    HorizontalAlignment="Stretch"
+                    HorizontalContentAlignment="Left"
+                    VerticalContentAlignment="Top">
+                    <Expander.Header>
+                        <Grid Height="67">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="30" />
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                FontFamily="Segoe MDL2 Assets"
+                                FontSize="20"
+                                Text="&#xE714;" />
+                            <TextBlock
+                                Grid.Column="1"
+                                Margin="20,0,0,0"
+                                HorizontalAlignment="Left"
+                                VerticalAlignment="Center"
+                                Text="帧提取选项" />
+                        </Grid>
+                    </Expander.Header>
+                    <Expander.Content>
+                        <StackPanel Orientation="Vertical" Spacing="3">
+                            <Border/>
+                            <Border/>
+                            <Border/>
+                        </StackPanel>
+                    </Expander.Content>
+                </Expander>
             </StackPanel>
         </ScrollViewer>
 

@@ -173,8 +173,6 @@ namespace MediaDesktop.UI.Helpers
                 if (disposing)
                 {
                     // TODO: 释放托管状态(托管对象)
-                    MediaPlayer.Stop();
-                    MediaPlayer.Dispose();
                     softwareBitmap.Dispose();
                 }
 

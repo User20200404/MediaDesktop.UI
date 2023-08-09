@@ -12,7 +12,7 @@
 
     <Page.Resources>
         <vm:InvisbileIfEqualsConverter x:Key="InvisibleIfEqualsConverter" />
-        <vm:VisbileIfEqualsConverter x:Key="VisibleIfEqualsConverter" />
+        <vm:VisibleIfEqualsConverter x:Key="VisibleIfEqualsConverter" />
         <DataTemplate x:Key="playingListTemplate" x:DataType="vm:MediaPlayingListViewModel">
             <Grid Height="120" HorizontalAlignment="Stretch">
                 <StackPanel

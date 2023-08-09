@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -11,6 +12,7 @@ namespace MediaDesktop.UI.Models
     {
         public Media Media { get; set; }
         public string MediaPath { get; set; }
+        public FileStream OpenedFileStream { get; set; }
         public bool IsMediaLoaded { get { return Media is not null; } }
 
         /// <summary>

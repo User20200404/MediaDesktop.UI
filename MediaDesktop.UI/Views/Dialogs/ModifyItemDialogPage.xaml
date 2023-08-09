@@ -6,13 +6,14 @@
     xmlns:local="using:MediaDesktop.UI.Views.Dialogs"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:model="using:MediaDesktop.UI.ViewModels"
+    xmlns:uc="using:MediaDesktop.UI.Views.UserControls"
     xmlns:vm="using:MediaDesktop.UI.ViewModels"
     d:DataContext="{d:DesignInstance Type=model:MediaDesktopItemViewModel}"
     Background="Transparent"
-    mc:Ignorable="d" >
+    mc:Ignorable="d">
     <Page.Resources>
         <vm:BooleanInverseConverter x:Key="BooleanInverseConverter" />
-        <vm:VisbileIfEqualsConverter x:Key="VisbileIfEqualsConverter" />
+        <vm:VisibleIfEqualsConverter x:Key="VisbileIfEqualsConverter" />
     </Page.Resources>
 
     <Grid x:Name="grid">
@@ -23,16 +24,15 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="500" />
+            <ColumnDefinition Width="Auto" />
             <ColumnDefinition Width="Auto" />
         </Grid.ColumnDefinitions>
-
         <TextBlock
+            x:Name="dialogTitleTextBlock"
             Grid.ColumnSpan="2"
             HorizontalAlignment="Center"
             VerticalAlignment="Top"
-            FontSize="20"
-            Text="{x:Bind Tag.ToString(), Mode=OneWay}" />
+            FontSize="20" />
 
         <StackPanel
             Grid.Row="1"
@@ -53,27 +53,30 @@
                     <Setter Property="CornerRadius" Value="4" />
                 </Style>
                 <Style TargetType="TextBox">
-                    <Setter Property="MinWidth" Value="350" />
-                    <Setter Property="MaxWidth" Value="350" />
+                    <Setter Property="MinWidth" Value="300" />
+                    <Setter Property="MaxWidth" Value="300" />
                     <Setter Property="CornerRadius" Value="4" />
-                    <Setter Property="AllowDrop" Value="True"/>
+                    <Setter Property="AllowDrop" Value="True" />
+                    <Setter Property="HorizontalAlignment" Value="Stretch" />
                 </Style>
             </StackPanel.Resources>
             <StackPanel Orientation="Horizontal" Spacing="5">
                 <TextBlock Text="主 标 题" />
-                <TextBox Text="{Binding Title, Mode=TwoWay}" />
+                <TextBox Text="{Binding Title, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
             </StackPanel>
             <StackPanel Orientation="Horizontal" Spacing="5">
                 <TextBlock Text="副 标 题" />
-                <TextBox Text="{Binding SubTitle, Mode=TwoWay}" />
+                <TextBox Text="{Binding SubTitle, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
             </StackPanel>
             <StackPanel Orientation="Horizontal" Spacing="5">
                 <TextBlock Text="文件路径" />
                 <TextBox
                     x:Name="mediaPathTextBox"
+                    DragOver="{x:Bind vm:CommonUIMethods.DragOverEventHandlerForFileDrop}"
+                    Drop="{x:Bind vm:CommonUIMethods.TextBoxGetDropFilePathEventHandler}"
                     IsEnabled="{x:Bind trueViewModel.MediaItemViewModel.RuntimeDataSet.IsMediaPlaying, Converter={StaticResource BooleanInverseConverter}, Mode=OneWay}"
-                    Text="{Binding MediaPath, Mode=TwoWay}"
-                    TextChanged="MediaPathTextBox_TextChanged" DragOver="{x:Bind vm:CommonUIMethods.DragOverEventHandlerForFileDrop}"  Drop="{x:Bind vm:CommonUIMethods.TextBoxGetDropFilePathEventHandler}"/>
+                    Text="{Binding MediaPath, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                    TextChanged="MediaPathTextBox_TextChanged" />
                 <Button
                     Click="BrowseButton_Click"
                     Content="浏览"
@@ -82,7 +85,11 @@
             </StackPanel>
             <StackPanel Orientation="Horizontal" Spacing="5">
                 <TextBlock Text="封面路径" />
-                <TextBox x:Name="imagePathTextBox" Text="{Binding ImagePath, Mode=TwoWay}"  DragOver="{x:Bind vm:CommonUIMethods.DragOverEventHandlerForFileDrop}"  Drop="{x:Bind vm:CommonUIMethods.TextBoxGetDropFilePathEventHandler}"/>
+                <TextBox
+                    x:Name="imagePathTextBox"
+                    DragOver="{x:Bind vm:CommonUIMethods.DragOverEventHandlerForFileDrop}"
+                    Drop="{x:Bind vm:CommonUIMethods.TextBoxGetDropFilePathEventHandler}"
+                    Text="{Binding ImagePath, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                 <Button
                     Click="BrowseButton_Click"
                     Content="浏览"
@@ -103,15 +110,29 @@
                 Foreground="OrangeRed" />
         </StackPanel>
 
-        <Border x:Name="imageBorder"
-            Grid.Row="1"
+        <Border
+            x:Name="imageBorder"
+            Grid.Row="0"
+            Grid.RowSpan="2"
             Grid.Column="1"
             Width="320"
             Height="180"
+            Margin="25,20,10,0"
             BorderBrush="Gray"
             BorderThickness="1"
             CornerRadius="4">
             <Image x:Name="previewImage" Source="{Binding ImagePath, Mode=OneWay, Converter={StaticResource ImageSourceConverter}}" />
         </Border>
+        <Button
+            x:Name="pickFrameButton"
+            Grid.Row="1"
+            Grid.RowSpan="2"
+            Grid.Column="1"
+            Margin="0,0,10,15"
+            HorizontalAlignment="Right"
+            VerticalAlignment="Bottom"
+            Click="PickFrameButton_Click"
+            Content="从所选媒体中截取 &gt;"
+            FontSize="11" />
     </Grid>
 </Page>

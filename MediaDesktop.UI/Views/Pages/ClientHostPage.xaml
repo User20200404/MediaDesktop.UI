@@ -11,26 +11,33 @@
     Background="Transparent"
     mc:Ignorable="d">
     <Page.Resources>
-        <Storyboard x:Key="ControlPanelShowAnimation" Storyboard.TargetName="controlGroupBorder">
-            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(TranslateTransform.Y)" Duration="0:0:0.25">
-                <DoubleAnimationUsingKeyFrames.KeyFrames>
-                    <SplineDoubleKeyFrame
-                        KeySpline="0,0.99 0.9,0.999"
-                        KeyTime="0:0:0.25"
-                        Value="0" />
-                </DoubleAnimationUsingKeyFrames.KeyFrames>
-            </DoubleAnimationUsingKeyFrames>
+        <Storyboard
+            x:Key="ControlPanelShowStoryboard"
+            x:Name="controlPanelShowStoryboard"
+            Storyboard.TargetName="controlGroupBorder">
+            <DoubleAnimation
+                x:Name="controlPanelShowAnimation"
+                Storyboard.TargetProperty="(UIElement.RenderTransform).(TranslateTransform.Y)"
+                To="0"
+                Duration="0:0:0.5">
+                <DoubleAnimation.EasingFunction>
+                    <ExponentialEase EasingMode="EaseOut" Exponent="6" />
+                </DoubleAnimation.EasingFunction>
+            </DoubleAnimation>
         </Storyboard>
-        <Storyboard x:Key="ControlPanelHideAnimation" Storyboard.TargetName="controlGroupBorder">
-            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(TranslateTransform.Y)" Duration="0:0:0.25">
-                <DoubleAnimationUsingKeyFrames.KeyFrames>
-                    <SplineDoubleKeyFrame
-                        x:Name="controlPanelHideEndKeyFrame"
-                        KeySpline="0,0.99 0.9,0.999"
-                        KeyTime="0:0:0.25"
-                        Value="{Binding ElementName=controlGroupBorder, Path=ActualHeight}" />
-                </DoubleAnimationUsingKeyFrames.KeyFrames>
-            </DoubleAnimationUsingKeyFrames>
+        <Storyboard
+            x:Key="ControlPanelHideStoryboard"
+            x:Name="controlPanelHideStoryboard"
+            Storyboard.TargetName="controlGroupBorder">
+            <DoubleAnimation
+                x:Name="controlPanelHideAnimation"
+                Storyboard.TargetProperty="(UIElement.RenderTransform).(TranslateTransform.Y)"
+                From="0"
+                Duration="0:0:0.5">
+                <DoubleAnimation.EasingFunction>
+                    <ExponentialEase EasingMode="EaseOut" Exponent="6" />
+                </DoubleAnimation.EasingFunction>
+            </DoubleAnimation>
         </Storyboard>
         <vm:IsFavouriteConverter x:Key="IsFavouriteConverter" />
         <vm:IsPlayingConverter x:Key="IsPlayingConverter" />
@@ -357,13 +364,6 @@
                     Content="^"
                     FontSize="12"
                     Visibility="Collapsed" />
-                <uc:MediaSnapshotPicker
-                    Width="320"
-                    Height="180"
-                    HorizontalAlignment="Center"
-                    VerticalAlignment="Center"
-                    Background="#55FFFFFF"
-                    FilePath="{x:Bind global:GlobalResources.ViewModelCollection.CurrentDesktopItemViewModel.MediaPath, Mode=OneWay}" />
             </Grid>
         </NavigationView>
     </Grid>

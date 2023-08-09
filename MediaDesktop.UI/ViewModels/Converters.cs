@@ -221,7 +221,7 @@ namespace MediaDesktop.UI.ViewModels
             throw new NotImplementedException();
         }
     }
-    public class VisbileIfEqualsConverter : IValueConverter
+    public class VisibleIfEqualsConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, string language)
         {
@@ -240,6 +240,27 @@ namespace MediaDesktop.UI.ViewModels
             throw new NotImplementedException();
         }
     }
+
+    public class FullOpacityIfEqualsConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, string language)
+        {
+            if (value.ToString() == parameter.ToString())
+            {
+                return 1d;
+            }
+            else
+            {
+                return 0d;
+            }
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, string language)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
     public class InvisbileIfEqualsConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, string language)
@@ -264,6 +285,7 @@ namespace MediaDesktop.UI.ViewModels
         public object Convert(object value, Type targetType, object parameter, string language)
         {
             string path = value as string;
+
             ImageSource source;
             var cache = GlobalResources.ImageCaches.FirstOrDefault(i => i.ImagePath == path);
             if (cache is not null)
@@ -275,7 +297,7 @@ namespace MediaDesktop.UI.ViewModels
             {
                 ImageCache newCache = new ImageCache() { ImagePath = path };
                 newCache.TryLoadImage();
-                if(newCache.Image is not null)
+                if (newCache.Image is not null && GlobalResources.ImageCaches.Count <= 20)
                 {
                     GlobalResources.ImageCaches.Add(newCache);
                 }

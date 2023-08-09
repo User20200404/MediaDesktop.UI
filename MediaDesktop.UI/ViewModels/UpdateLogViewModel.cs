@@ -23,12 +23,23 @@ namespace MediaDesktop.UI.ViewModels
         private string GetSummaryText()
         {
             StringBuilder builder = new StringBuilder();
-            Added.ForEach(s => builder.AppendLine($"+{s}"));
-            builder.AppendLine();
-            Removed.ForEach(s => builder.AppendLine($"-{s}"));
-            builder.AppendLine(); 
-            Modified.ForEach(s => builder.AppendLine($"⚪{s}"));
-            builder.AppendLine();
+            if(Added.Count > 0)
+            {
+                Added.ForEach(s => builder.AppendLine($"+{s}")); 
+                builder.AppendLine();
+            }
+
+            if (Removed.Count > 0)
+            {
+                Removed.ForEach(s => builder.AppendLine($"-{s}"));
+                builder.AppendLine();
+            }
+
+            if (Modified.Count > 0)
+            {
+                Modified.ForEach(s => builder.AppendLine($"⚪{s}"));
+                builder.AppendLine();
+            }
             builder.AppendLine(Notes);
             return builder.ToString();
         }

@@ -30,20 +30,26 @@ namespace MediaDesktop.UI.ViewModels
                 {
                     collection.Clear();
 
-                    foreach (var section in iniData.Sections)
-                    {
-                        MediaDesktopItemViewModel viewModel = new MediaDesktopItemViewModel()
+                  
+                        Task.Run(() =>
                         {
-                            MediaPath = section.Keys[nameof(viewModel.MediaPath)],
-                            ImagePath = section.Keys[nameof(viewModel.ImagePath)],
-                            Title = section.Keys[nameof(viewModel.Title)],
-                            SubTitle = section.Keys[nameof(viewModel.SubTitle)],
-                            IsFavourite = bool.Parse(section.Keys[nameof(viewModel.IsFavourite)]),
-                            HistoryLevel = int.Parse(section.Keys[nameof(viewModel.HistoryLevel)])
-                        };
-                        //viewModel.MediaItemViewModel.LoadMedia(GlobalResources.LibVLC);
-                        collection.Add(viewModel);
-                    }
+                            foreach (var section in iniData.Sections)
+                            {
+                                MediaDesktopItemViewModel viewModel = new MediaDesktopItemViewModel()
+                                {
+                                    MediaPath = section.Keys[nameof(viewModel.MediaPath)],
+                                    ImagePath = section.Keys[nameof(viewModel.ImagePath)],
+                                    Title = section.Keys[nameof(viewModel.Title)],
+                                    SubTitle = section.Keys[nameof(viewModel.SubTitle)],
+                                    IsFavourite = bool.Parse(section.Keys[nameof(viewModel.IsFavourite)]),
+                                    HistoryLevel = int.Parse(section.Keys[nameof(viewModel.HistoryLevel)])
+                                };
+                                //viewModel.MediaItemViewModel.LoadMedia(GlobalResources.LibVLC);
+                                App.DispatcherQueue.TryEnqueue(() => collection.Add(viewModel));
+                            }
+                        });
+                     
+                    
                 }
             }
         }

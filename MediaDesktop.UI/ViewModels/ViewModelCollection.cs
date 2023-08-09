@@ -23,6 +23,8 @@ using LibVLCSharp.Shared;
 using System.Runtime.CompilerServices;
 using System.Text.Json;
 using Microsoft.UI.Xaml.Media.Animation;
+using MediaDesktop.UI.Views.UserControls;
+using Microsoft.UI.Xaml.Media;
 
 namespace MediaDesktop.UI.ViewModels
 {
@@ -140,43 +142,53 @@ namespace MediaDesktop.UI.ViewModels
 
         public ViewModelCollection()
         {
-            //UpdateLogViewModels = new ObservableCollection<UpdateLogViewModel>();
-            //UpdateLogViewModel model1 = new UpdateLogViewModel() { Version = "1.0.0.0" };
-            //model1.Added.Add("实现基本桌面视频播放功能");
-            //model1.Added.Add("实现自定义添加项目");
-            //UpdateLogViewModel model2 = new UpdateLogViewModel { Version = "1.0.0.1" };
-            //model2.Added.Add("实现自定义播放列表功能");
-            //UpdateLogViewModel model3 = new UpdateLogViewModel { Version = "1.0.0.3" };
-            //model3.Added.Add("适配了Windows 10和11的系统背景材质");
-            //model3.Added.Add("实现当前播放项目信息功能");
-            //model3.Added.Add("实现项目右键菜单功能");
-            //model3.Modified.Add("修复了一个功能性BUG，该BUG曾导致设置页面导航时程序崩溃");
-            //UpdateLogViewModel model4 = new UpdateLogViewModel { Version = "1.0.0.6" };
-            //model4.Modified.Add("修复了一个功能性BUG，该BUG曾导致快速切换适配时发生线程死锁");
-            //model4.Modified.Add("修复了一个功能性BUG，该BUG曾导致切换媒体文件时自适应拉伸失效");
-            //model4.Modified.Add("修复了一个功能性BUG，该BUG曾导致切换媒体文件时弹出LibVLC默认输出窗口");
-            //model4.Modified.Add("修复了一个功能性BUG，该BUG曾导致编辑项目在程序重启前不生效");
-            //UpdateLogViewModel model5 = new UpdateLogViewModel { Version = "1.1.0.0" };
-            //model5.Added.Add("加入更新日志功能，该功能在设置->关于中启用");
-            //model5.Modified.Add("修复了一个内部BUG，该BUG曾导致视图模型多次通知集合变更");
-            //model5.Modified.Add("修复了一个功能性BUG，该BUG曾导致设置页面中的项目不能显示垂直滚动条");
-            //UpdateLogViewModel model6 = new UpdateLogViewModel { Version = "1.1.0.1" };
-            //model6.Added.Add("加入弹出消息功能，现在可以在进行部分操作或程序发生异常时看到这个弹出消息框。");
-            //model6.Added.Add("加入隐藏播放控件功能");
-            //UpdateLogViewModel model7 = new UpdateLogViewModel { Version = "1.1.0.2"};
-            //model7.Added.Add("加入了文件拖拽功能，现在可以将媒体文件拖入库页面来快捷添加项目。");
-            //model7.Added.Add("加入了隐藏窗口功能，现在可以通过播放控件的折叠菜单来隐藏窗口。");
-            //model7.Modified.Add("修复了一个功能性BUG，该BUG曾导致删除项目时不会将收藏页面中项目一并移除。");
-            //model7.Modified.Add("更新了设置页面中的部分UI。");
-            //UpdateLogViewModels.Add(model1);
-            //UpdateLogViewModels.Add(model2);
-            //UpdateLogViewModels.Add(model3);
-            //UpdateLogViewModels.Add(model4);
-            //UpdateLogViewModels.Add(model5);
-            //updateLogViewModels.Add(model6);
-            //updateLogViewModels.Add(model7);
-            //string s = JsonSerializer.Serialize(UpdateLogViewModels, new JsonSerializerOptions() { WriteIndented = true });
-            //File.WriteAllText("C:\\Users\\31129\\Desktop\\UpdateLogs.txt", s);
+            UpdateLogViewModels = new ObservableCollection<UpdateLogViewModel>();
+            UpdateLogViewModel model1 = new UpdateLogViewModel() { Version = "1.0.0.0" };
+            model1.Added.Add("实现基本桌面视频播放功能");
+            model1.Added.Add("实现自定义添加项目");
+            UpdateLogViewModel model2 = new UpdateLogViewModel { Version = "1.0.0.1" };
+            model2.Added.Add("实现自定义播放列表功能");
+            UpdateLogViewModel model3 = new UpdateLogViewModel { Version = "1.0.0.3" };
+            model3.Added.Add("适配了Windows 10和11的系统背景材质");
+            model3.Added.Add("实现当前播放项目信息功能");
+            model3.Added.Add("实现项目右键菜单功能");
+            model3.Modified.Add("修复了一个功能性BUG，该BUG曾导致设置页面导航时程序崩溃");
+            UpdateLogViewModel model4 = new UpdateLogViewModel { Version = "1.0.0.6" };
+            model4.Modified.Add("修复了一个功能性BUG，该BUG曾导致快速切换适配时发生线程死锁");
+            model4.Modified.Add("修复了一个功能性BUG，该BUG曾导致切换媒体文件时自适应拉伸失效");
+            model4.Modified.Add("修复了一个功能性BUG，该BUG曾导致切换媒体文件时弹出LibVLC默认输出窗口");
+            model4.Modified.Add("修复了一个功能性BUG，该BUG曾导致编辑项目在程序重启前不生效");
+            UpdateLogViewModel model5 = new UpdateLogViewModel { Version = "1.1.0.0" };
+            model5.Added.Add("加入更新日志功能，该功能在设置->关于中启用");
+            model5.Modified.Add("修复了一个内部BUG，该BUG曾导致视图模型多次通知集合变更");
+            model5.Modified.Add("修复了一个功能性BUG，该BUG曾导致设置页面中的项目不能显示垂直滚动条");
+            UpdateLogViewModel model6 = new UpdateLogViewModel { Version = "1.1.0.1" };
+            model6.Added.Add("加入弹出消息功能，现在可以在进行部分操作或程序发生异常时看到这个弹出消息框。");
+            model6.Added.Add("加入隐藏播放控件功能");
+            UpdateLogViewModel model7 = new UpdateLogViewModel { Version = "1.1.0.2" };
+            model7.Added.Add("加入了文件拖拽功能，现在可以将媒体文件拖入库页面来快捷添加项目。");
+            model7.Added.Add("加入了隐藏窗口功能，现在可以通过播放控件的折叠菜单来隐藏窗口。");
+            model7.Modified.Add("修复了一个功能性BUG，该BUG曾导致删除项目时不会将收藏页面中项目一并移除。");
+            model7.Modified.Add("更新了设置页面中的部分UI。");
+            UpdateLogViewModel model8 = new UpdateLogViewModel { Version = "1.1.1.0" };
+            model8.Added.Add("加入了帧画面提取功能，现在可以在编辑项目页面中通过提取帧来设置封面。");
+            model8.Added.Add("完善了库项目缩放功能，现在可以通过CTRL+鼠标滚轮来设置大多数元素的大小。");
+            model8.Added.Add("加入了播放下一个功能，现在可以通过右键项目来将其设置为下一个播放项。");
+            model8.Modified.Add("优化了库项目加载的方法，现在程序启动的响应速度得到一定提升。");
+            model8.Modified.Add("优化了更新日志的显示方法，现在不会在没有相关内容时追加换行符。");
+            model8.Modified.Add("修复了一个功能性BUG，该BUG曾导致在双击菜单项时，程序因重复打开ContentDialog而崩溃。");
+            model8.Modified.Add("修复了一个内部BUG，该BUG曾导致同一种ContentDialog被重复显示。");
+            model8.Modified.Add("修复了一个功能性BUG，该BUG曾导致在修改背景材质时，效果不会即时应用。");
+            UpdateLogViewModels.Add(model1);
+            UpdateLogViewModels.Add(model2);
+            UpdateLogViewModels.Add(model3);
+            UpdateLogViewModels.Add(model4);
+            UpdateLogViewModels.Add(model5);
+            updateLogViewModels.Add(model6);
+            updateLogViewModels.Add(model7);
+            updateLogViewModels.Add(model8);
+            string s = JsonSerializer.Serialize(UpdateLogViewModels, new JsonSerializerOptions() { WriteIndented = true });
+            File.WriteAllText("C:\\Users\\31129\\Desktop\\UpdateLogs.txt", s);
 
             ViewModelItems = new ObservableCollection<MediaDesktopItemViewModel>();
             MediaPlayingListViewModels = new ObservableCollection<MediaPlayingListViewModel>();
@@ -438,10 +450,10 @@ namespace MediaDesktop.UI.ViewModels
 
         private void GlobalResources_InitializeCompleted(object sender, EventArgs e)
         {
-            MediaDesktopItemViewModelConfig.InitViewModel(); //reads configs and restores the items last time.
-            MediaPlayingListConfig.InitViewModel();
-            InitFavouriteCollection();
-            InitHistoryCollection();
+                MediaDesktopItemViewModelConfig.InitViewModel(); //reads configs and restores the items last time.
+                MediaPlayingListConfig.InitViewModel();
+                InitFavouriteCollection();
+                InitHistoryCollection();
         }
 
 
@@ -667,30 +679,29 @@ namespace MediaDesktop.UI.ViewModels
         {
             var model = new MediaDesktopItemViewModel();
 
-            ContentDialog contentDialog = new ContentDialog()
+            NotifyButtonClickContentDialog contentDialog = new NotifyButtonClickContentDialog()
             {
-                Content = new ModifyItemDialogPage(model) { DataContext = model },
+                Content = new ModifyItemDialogPage(model) { DataContext = model, Tag = ModifyItemOperation.CreateNew },
                 PrimaryButtonText = "添加",
                 SecondaryButtonText = "取消",
                 DefaultButton = ContentDialogButton.Primary,
                 IsPrimaryButtonEnabled = false,
                 XamlRoot = xamlRoot
             };
-            (contentDialog.Content as ModifyItemDialogPage).Tag =  "添加项目";
 
-            var result = await contentDialog.ShowAsync();
-            if (result == ContentDialogResult.Primary)
-            {
-                if (!File.Exists(model.MediaPath))
-                {
-                    return;
-                }
+            contentDialog.PromisedShowDeferral();
+            //if (result == ContentDialogResult.Primary)
+            //{
+            //    if (!File.Exists(model.MediaPath))
+            //    {
+            //        return;
+            //    }
 
-                ViewModelItems.Add(model);
-            }
+            //    ViewModelItems.Add(model);
+            //}
         }
 
-        public async void EditViewModel(Microsoft.UI.Xaml.XamlRoot xamlRoot, MediaDesktopItemViewModel model)
+        public void EditViewModel(Microsoft.UI.Xaml.XamlRoot xamlRoot, MediaDesktopItemViewModel model)
         {
             MediaDesktopItemViewModel tempModel = new MediaDesktopItemViewModel()
             {
@@ -700,9 +711,9 @@ namespace MediaDesktop.UI.ViewModels
                 ImagePath = model.ImagePath
             };
 
-            ContentDialog contentDialog = new ContentDialog()
+            NotifyButtonClickContentDialog contentDialog = new NotifyButtonClickContentDialog()
             {
-                Content = new ModifyItemDialogPage(model) { DataContext = tempModel, Tag = "编辑项目" },
+                Content = new ModifyItemDialogPage(model) { DataContext = tempModel, Tag = ModifyItemOperation.ModifyExisting},
                 PrimaryButtonText = "保存",
                 SecondaryButtonText = "取消",
                 DefaultButton = ContentDialogButton.Primary,
@@ -710,14 +721,14 @@ namespace MediaDesktop.UI.ViewModels
                 XamlRoot = xamlRoot
             };
 
-            var result = await contentDialog.ShowAsync();
-            if (result == ContentDialogResult.Primary)
-            {
-                model.Title = tempModel.Title;
-                model.SubTitle = tempModel.SubTitle;
-                model.MediaPath = tempModel.MediaPath;
-                model.ImagePath = tempModel.ImagePath;
-            }
+            contentDialog.PromisedShowDeferral();
+            //if (result == ContentDialogResult.Primary)
+            //{
+            //    model.Title = tempModel.Title;
+            //    model.SubTitle = tempModel.SubTitle;
+            //    model.MediaPath = tempModel.MediaPath;
+            //    model.ImagePath = tempModel.ImagePath;
+            //}
         }
 
         public async void RemoveViewModel(XamlRoot xamlRoot, MediaDesktopItemViewModel model)

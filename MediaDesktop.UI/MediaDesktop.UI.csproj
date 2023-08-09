@@ -30,6 +30,7 @@
 	</ItemGroup>
 	<ItemGroup>
 		<None Remove="Assets\logs\UpdateLogs.txt" />
+		<None Remove="Views\Dialogs\PickFrameDialogPage.xaml" />
 		<None Remove="Views\Flyouts\FlyoutResources.xaml" />
 		<None Remove="Views\UserControls\MediaSnapshotPicker.xaml" />
 	</ItemGroup>
@@ -48,6 +49,7 @@
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.0" />
     <PackageReference Include="H.NotifyIcon.WinUI" Version="2.0.76" />
     <PackageReference Include="ini-parser" Version="2.5.2" />
+    <PackageReference Include="LibVLCSharp" Version="3.7.0" />
     <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.2.221109.1" />
     <PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.22621.755" />
     <Manifest Include="$(ApplicationManifest)" />
@@ -84,6 +86,11 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Assets\Image\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="Views\Dialogs\PickFrameDialogPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Page Update="Views\UserControls\MediaSnapshotPicker.xaml">

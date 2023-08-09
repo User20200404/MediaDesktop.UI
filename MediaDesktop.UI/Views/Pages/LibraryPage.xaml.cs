@@ -85,7 +85,7 @@ namespace MediaDesktop.UI.Views.Pages
 
         void IEventSafeSealed.EventLogOff()
         {
-            
+            GlobalResources.InitializeCompleted -= GlobalResources_InitializeCompleted;
         }
 
         private void Page_KeyDown(object sender, KeyRoutedEventArgs e)
@@ -219,5 +219,6 @@ namespace MediaDesktop.UI.Views.Pages
         {
 
         }
+
     }
 }

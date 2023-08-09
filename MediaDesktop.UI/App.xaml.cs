@@ -9,6 +9,7 @@ using Microsoft.Windows.AppLifecycle;
 using System.Runtime.InteropServices;
 using WindowManager.WinApis.UnEncapsulated;
 using WindowManager;
+using Microsoft.UI.Dispatching;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -20,6 +21,7 @@ namespace MediaDesktop.UI
     /// </summary>
     public partial class App : Application
     {
+        public static DispatcherQueue DispatcherQueue { get; private set; }
         const int WM_SHOWWINDOW = 0x18;
         const int WM_WINDOWPOSCHANGING = 0x46;
         const int WM_GETMINMAXINFO = 0x24;
@@ -119,7 +121,7 @@ namespace MediaDesktop.UI
                 }
             }
             m_window = new ClientWindow();
-
+            DispatcherQueue = m_window.DispatcherQueue;
 
         }
 
