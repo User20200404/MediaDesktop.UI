@@ -193,7 +193,7 @@ namespace MediaDesktop.UI.Services
         {
             await Task.Run(() =>
             {
-                Core.Initialize(AppDomain.CurrentDomain.BaseDirectory + "\\Assets\\libvlc\\win-x64");
+                //Core.Initialize(AppDomain.CurrentDomain.BaseDirectory + "\\Assets\\libvlc\\win-x64");
                 LibVLC = new LibVLC();
             });
             InitializeLibVLCCompeleted?.Invoke(LibVLC, EventArgs.Empty);

@@ -23,9 +23,14 @@
 		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 	</PropertyGroup>
 	<ItemGroup>
+		<Compile Remove="Assets\libvlc\**" />
 		<Compile Remove="Views\Flyout\**" />
+		<Content Remove="Assets\libvlc\**" />
+		<EmbeddedResource Remove="Assets\libvlc\**" />
 		<EmbeddedResource Remove="Views\Flyout\**" />
+		<None Remove="Assets\libvlc\**" />
 		<None Remove="Views\Flyout\**" />
+		<Page Remove="Assets\libvlc\**" />
 		<Page Remove="Views\Flyout\**" />
 	</ItemGroup>
 	<ItemGroup>
@@ -96,5 +101,8 @@
     <Page Update="Views\UserControls\MediaSnapshotPicker.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <PRIResource Remove="Assets\libvlc\**" />
   </ItemGroup>
 </Project>
